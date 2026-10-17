@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Тест: {{ lang }} (Уровень {{ diff }})</title>
+</head>
+<body>
+    <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    
+    <div id="sidePane" class="side-panel">
+        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+        <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
+        <a href="/lessons" class="nav-link">УРОКИ</a>
+    </div>
+
+    <div style="max-width: 700px; margin: 80px auto; text-align: center; padding: 0 20px;">
+        <div class="badge-top" id="q-header">{{ lang }} - УРОВЕНЬ {{ diff }}</div>
+        
+        <div class="auth-card" id="test-box" style="margin-top: 30px; min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
+            <h2 id="question-text" style="margin-bottom: 30px; line-height: 1.4;">Загрузка вопросов...</h2>
+            <div id="options-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <!-- Сюда JS вставит кнопки -->
+            </div>
+        </div>
+
+        <div id="result-box" class="auth-card" style="display: none; margin-top: 30px;">
+            <h2 style="color: var(--mint);">РЕЗУЛЬТАТ</h2>
+            <p id="score-text" style="font-size: 32px; margin: 20px 0;"></p>
+            <button class="auth-btn" onclick="location.href='/test_hub'">К СПИСКУ ТЕСТОВ</button>
+        </div>
+    </div>
+
+    <script>
+        // Имитация базы данных (потом сделаем загрузку через API)
+        const allQuestions = {
+            'Python': [
+                { q: "Как вывести 'Hello World'?", a: ["print()", "echo", "console.log", "printf"], c: 0 },
+                { q: "Какое ключевое слово для функций?", a: ["func", "def", "lambda", "define"], c: 1 }
+            ],
+            'C++': [
+                { q: "Как завершить строку кода?", a: [":", ".", ";", "!"], c: 2 }
+            ]
+            // Добавь остальные языки по аналогии
+        };
+
+        let currentQ = 0;
+        let score = 0;
+        const lang = "{{ lang }}";
+        const questions = allQuestions[lang] || [{q: "Вопросы еще не добавлены", h: ["Ок"], c: 0}];
+
+        function showQuestion() {
+            if (currentQ >= questions.length) {
+                showResult();
+                return;
+            }
+            let q = questions[currentQ];
+            document.getElementById('question-text').innerText = q.q;
+            let optionsHTML = '';
+            q.a.forEach((opt, i) => {
+                optionsHTML += `<button class="auth-btn" style="font-size: 14px;" onclick="answer(${i})">${opt}</button>`;
+            });
+            document.getElementById('options-box').innerHTML = optionsHTML;
+        }
+
+        function answer(idx) {
+            if (idx === questions[currentQ].c) score++;
+            currentQ++;
+            showQuestion();
+        }
+
+        function showResult() {
+            document.getElementById('test-box').style.display = 'none';
+            document.getElementById('result-box').style.display = 'block';
+            document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
+        }
+
+        function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
+        
+        showQuestion();
+    </script>
+</body>
+</html>

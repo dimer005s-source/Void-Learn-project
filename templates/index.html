@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Void Learn</title>
+</head>
+<body>
+    <header class="header-nav"><div class="main-menu-center">VOID LEARN</div></header>
+
+    <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+
+    <div id="sidePane" class="side-panel">
+        <a href="/" class="nav-link">ГЛАВНАЯ</a>
+        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+        <a href="/register" class="nav-link">РЕГИСТРАЦИЯ</a>
+    </div>
+
+    <div class="profile-card">
+        <h1 style="color: var(--mint);">Добро пожаловать в хаб!</h1>
+        <p>Выбирай язык, учи уроки и сдавай тесты на сертификат.</p>
+        <button class="toggle-btn" onclick="location.href='/profile'">ПЕРЕЙТИ В ПРОФИЛЬ</button>
+    </div>
+
+    <script>
+        function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
+    </script>
+</body>
+</html>

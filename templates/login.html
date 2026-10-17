@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Вход | Void Learn</title>
+</head>
+<body>
+
+<div class="auth-wrapper">
+    <div class="badge-top">ВХОД</div>
+
+
+<div class="auth-card">
+    <h2 style="color: var(--mint);">ДОБРО ПОЖАЛОВАТЬ</h2>
+    
+    <form method="POST">
+        <input type="email" name="email" class="input-field" placeholder="EMAIL" required>
+        
+        <div class="password-wrapper">
+            <input type="password" name="password" id="passInput" class="input-field" placeholder="ПАРОЛЬ" required>
+            <button type="button" class="eye-btn" onclick="togglePass()"><i id="eyeIcon" class="fa-regular fa-eye"></i></button>
+        </div>
+
+        <button type="submit" class="auth-btn">ВОЙТИ</button>
+        
+        <!-- ОШИБКА ТЕПЕРЬ ТУТ, ПОД КНОПКОЙ -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert-box"> {{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </form>
+
+    <a href="/register" style="text-decoration: none; color: var(--mint); font-size: 14px; margin-top: 25px; display: block; font-weight: bold; text-transform: uppercase;">
+    НЕТ АККАУНТА? ЗАРЕГИСТРИРОВАТЬСЯ
+</a>
+</div>
+
+</div>
+
+<script>
+    function togglePass() {
+    const passInput = document.getElementById('passInput');
+    const eyeIcon = document.getElementById('eyeIcon');
+    
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+        // Меняем на "закрытый глаз"
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+    } else {
+        passInput.type = 'password';
+        // Меняем обратно на "открытый"
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+    }
+}
+</script>
+
+</body>
+</html>

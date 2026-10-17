@@ -1,0 +1,44 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+
+<div id="sidePane" class="side-panel">
+    <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+    <a href="/test_hub" class="nav-link active-page">ТЕСТЫ</a>
+    <a href="/lessons" class="nav-link">УРОКИ</a>
+    <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+</div>
+
+<div style="display: flex; justify-content: center; margin-top: 30px;">
+    <div class="badge-top">ВЫБЕРИ ЯЗЫК И УРОВЕНЬ</div>
+</div>
+
+<div style="display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-top: 50px; padding: 20px;">
+    {% for lang in ['Python', 'C++', 'C#', 'Java'] %}
+    <div class="auth-card" style="width: 250px; text-align: center;">
+        <h2 style="color: var(--mint); letter-spacing: 2px;">{{ lang }}</h2>
+        
+        <div style="margin: 20px 0;">
+            <label style="color: #888; font-size: 12px; display: block; margin-bottom: 10px;">СЛОЖНОСТЬ:</label>
+            <select id="diff_{{ lang }}" style="background: #111; color: white; border: 1px solid var(--mint); padding: 5px; border-radius: 5px; width: 100%;">
+                {% for i in range(1, 11) %}
+                <option value="{{ i }}">Уровень {{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button class="auth-btn" onclick="startTest('{{ lang }}')">ЗАПУСК</button>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function startTest(lang) {
+    let diff = document.getElementById('diff_' + lang).value;
+    // Обязательно в кавычках, чтобы JS не поплыл
+    location.href = `/start_test/${lang}/${diff}`;
+}
+function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
+</script>

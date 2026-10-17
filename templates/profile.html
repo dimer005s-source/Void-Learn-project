@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Профиль - Void Learn</title>
+</head>
+<body>
+    <!-- Меню (sidePane) - БЕЗ ЭТОГО КНОПКА БУРГЕРА НЕ РАБОТАЕТ -->
+    <div id="sidePane" class="side-panel">
+        <a href="/profile" class="nav-link active-page">ПРОФИЛЬ</a>
+        <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
+        <a href="/lessons" class="nav-link">УРОКИ</a>
+        <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+    </div>
+
+    <a href="/logout" class="logout-btn-top">ВЫХОД</a>
+    <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+
+    <div class="auth-wrapper">
+        <div class="badge-top">ЛИЧНЫЙ КАБИНЕТ</div>
+        
+        <div class="profile-card">
+            <!-- УБРАЛИ СЕРУЮ ПЛАШКУ, ВМЕСТО НЕЕ ОТСТУП -->
+            <div style="margin-top: 20px;">
+                <h3>ЛОГИН: {{ current_user.fio }}</h3>
+                <p>КЛАСС: {{ current_user.grade }}</p>
+                <p>EMAIL: {{ current_user.email }}</p>
+            </div>
+
+            <button class="toggle-btn" onclick="togglePortfolio()" style="margin-top: 20px;">
+                ПОРТФОЛИО <span id="arrow">▼</span>
+            </button>
+
+            <!-- ЭТОТ БЛОК ТЕПЕРЬ БУДЕТ ПЛАВНО ВЫЕЗЖАТЬ -->
+            <div id="portfolio-content">
+                <form action="/save_portfolio" method="POST">
+                    <input type="text" name="google_link" placeholder="Ссылка на Google Drive" class="input-field" required>
+                    
+                    <p style="font-size: 12px; margin-top: 15px; color: var(--mint);">ВЫБЕРИТЕ ТЕГИ:</p>
+                    
+                    <div class="tags-grid">
+                        <div style="grid-column: 1 / 3; border-bottom: 1px solid var(--milk); padding-bottom: 5px;">ЯЗЫК:</div>
+                        <label class="tag-item"><input type="radio" name="lang_tag" value="#python" required> #PYTHON</label>
+                        <label class="tag-item"><input type="radio" name="lang_tag" value="#java"> #JAVA</label>
+                        <label class="tag-item"><input type="radio" name="lang_tag" value="#c_sharp"> #C_SHARP</label>
+                        <label class="tag-item"><input type="radio" name="lang_tag" value="#cpp"> #C++</label>
+
+                        <div style="grid-column: 1 / 3; border-bottom: 1px solid var(--milk); padding-bottom: 5px; margin-top: 10px;">ТИП ПРОЕКТА:</div>
+                        <label class="tag-item"><input type="radio" name="type_tag" value="#game" required> #GAME</label>
+                        <label class="tag-item"><input type="radio" name="type_tag" value="#site"> #SITE</label>
+                        <label class="tag-item"><input type="radio" name="type_tag" value="#software"> #SOFTWARE</label>
+                    </div>
+
+                    <button type="submit" class="auth-btn" style="padding: 10px;">СОХРАНИТЬ РАБОТУ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePortfolio() {
+            const content = document.getElementById('portfolio-content');
+            const arrow = document.getElementById('arrow');
+            content.classList.toggle('show');
+            arrow.innerText = content.classList.contains('show') ? '▲' : '▼';
+        }
+
+        function toggleMenu() { 
+            document.getElementById('sidePane').classList.toggle('active'); 
+        }
+    </script>
+</body>
+</html>
