@@ -200,3 +200,39 @@ input[type="submit"].auth-btn, button.auth-btn {
     padding: 5px;
     border-radius: 5px;
 }
+/* Делаем body гибким контейнером на весь экран */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Элементы (хедер и карточка) идут друг за другом */
+    align-items: center;    /* Центрируем всё по горизонтали */
+    justify-content: center; /* Центрируем всё по вертикали */
+    min-height: 100vh;     /* Высота во весь экран телефона/моника */
+    background-color: #fdfaf0; /* Твой цвет фона из скрина */
+    font-family: sans-serif;
+}
+
+/* Настройка самой карточки (белого блока) */
+.profile-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    text-align: center;
+    width: 90%;          /* На мобилках займет 90% ширины */
+    max-width: 450px;    /* На компах не будет шире 450px */
+    margin-top: 20px;    /* Чтобы не липла к хедеру если он сверху */
+}
+
+/* Кнопка */
+.toggle-btn {
+    width: 100%;         /* Кнопка на всю ширину карточки */
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--mint); /* Твоя переменная цвета */
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
