@@ -236,3 +236,44 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
+/* Обёртка для текста профиля */
+.user-info {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee; /* Тонкая линия разделения */
+    padding-bottom: 15px;
+}
+
+/* Имя пользователя */
+.user-name {
+    color: #333;
+    font-size: 24px;
+    margin: 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Контейнер для деталей (класс и почта) */
+.user-details {
+    display: flex;
+    flex-direction: column; /* Магия: выстраиваем в колонку! */
+    gap: 10px; /* Отступ между строками */
+    color: #666;
+    font-size: 16px;
+}
+
+/* Сами строчки с инфой */
+.detail-item {
+    background: #f9f9f9;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left: 4px solid var(--mint); /* Твоя "мятная" полоска слева */
+    text-align: left; /* Текст слева, чтобы красиво читалось */
+}
+
+/* Чтобы кнопка портфолио была по центру */
+.toggle-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
