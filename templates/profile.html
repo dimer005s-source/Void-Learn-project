@@ -8,21 +8,16 @@
 </head>
 <body>
    <div id="sidePane" class="side-panel">
-    <!-- Кнопка закрытия (если была) -->
-    <div class="close-btn" onclick="toggleMenu()" style="align-self: flex-end; margin-right: 20px; font-size: 30px; cursor: pointer; color: #4db6ac;">&times;</div>
+    <div class="close-btn" onclick="toggleMenu()">&times;</div>
 
-    <!-- Основные ссылки -->
     <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
     <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
     <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
     <a href="/lessons" class="nav-link">УРОКИ</a>
     <a href="/rating" class="nav-link">РЕЙТИНГ</a>
 
-    <!-- Распорка, которая вытолкнет Выход вниз -->
-    <div style="flex-grow: 1;"></div>
-
-    <!-- Кнопка Выход теперь внизу -->
-    <a href="/logout" class="nav-link" style="color: #ff6b6b !important; border-top: 1px solid #eee; width: 100%; border-radius: 0; margin: 0; padding: 20px 25px;">ВЫХОД</a>
+    <!-- Никаких пустых дивов-распорок не надо, профи юзают margin-top: auto -->
+    <a href="/logout" class="exit-link">ВЫХОД</a>
 </div>
 
     <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>

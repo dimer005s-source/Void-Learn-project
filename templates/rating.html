@@ -7,24 +7,18 @@
     <title>РЕЙТИНГ - Void Learn</title>
 </head>
 <body>
-       <!-- СТАНДАРТНОЕ МЕНЮ -->
-    <div id="sidePane" class="side-panel">
-        <div class="close-btn" onclick="toggleMenu()">&times;</div>
-        
-        <div class="nav-links-wrapper"> <!-- Добавили обертку -->
-            <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-            <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
-            <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
-            <a href="/lessons" class="nav-link">УРОКИ</a>
-            <a href="/rating" class="nav-link active-page">РЕЙТИНГ</a>
-        </div>
+   <div id="sidePane" class="side-panel">
+    <div class="close-btn" onclick="toggleMenu()">&times;</div>
 
-        <!-- Распорка сработает, если у side-panel будет flex -->
-        <div class="spacer" style="flex-grow: 1;"></div>
+    <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+    <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
+    <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
+    <a href="/lessons" class="nav-link">УРОКИ</a>
+    <a href="/rating" class="nav-link">РЕЙТИНГ</a>
 
-        <a href="/logout" class="nav-link exit-link">ВЫХОД</a>
-    </div>
-
+    <!-- Никаких пустых дивов-распорок не надо, профи юзают margin-top: auto -->
+    <a href="/logout" class="exit-link">ВЫХОД</a>
+</div>
 
     <!-- БУРГЕР -->
     <div class="burger-btn" onclick="toggleMenu()">

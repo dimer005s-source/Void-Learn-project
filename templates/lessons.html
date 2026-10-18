@@ -29,18 +29,18 @@
     </style>
 </head>
 <body>
-    <div id="sidePane" class="side-panel">
-        <!-- КРАСИВЫЙ КРЕСТИК -->
-        <div class="close-btn" onclick="toggleMenu()" style="align-self: flex-end; margin: 20px 25px 0 0; font-size: 40px; cursor: pointer; color: var(--mint); line-height: 1;">&times;</div>
-        
-        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-        <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
-        <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
-        <a href="/lessons" class="nav-link active-page">УРОКИ</a>
-        <a href="/rating" class="nav-link">РЕЙТИНГ</a>
-        <div style="flex-grow: 1;"></div>
-        <a href="/logout" class="nav-link" style="color: #ff6b6b !important; border-top: 1px solid #eee; margin: 0; padding: 20px 25px; width: 100%; border-radius: 0;">ВЫХОД</a>
-    </div>
+  <div id="sidePane" class="side-panel">
+    <div class="close-btn" onclick="toggleMenu()">&times;</div>
+
+    <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+    <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
+    <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
+    <a href="/lessons" class="nav-link">УРОКИ</a>
+    <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+
+    <!-- Никаких пустых дивов-распорок не надо, профи юзают margin-top: auto -->
+    <a href="/logout" class="exit-link">ВЫХОД</a>
+</div>
 
     <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
 
