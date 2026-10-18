@@ -1,269 +1,202 @@
+@font-face { font-family: 'BlackAcute'; src: url('../fonts/Black acute.ttf'); }
+@font-face { font-family: 'DefaultFont'; src: url('../fonts/default.ttf'); }
 
-@font-face {
-    font-family: 'BlackAcute';
-    src: url('../fonts/Black acute.ttf');
-}
+:root { --milk: #fdfaf0; --mint: #4db6ac; --silver: #c0c0c0; }
 
-:root {
-    --milk: #fdfaf0;
-    --mint: #4db6ac;
-    --silver: #c0c0c0;
-}
+body { background-color: var(--milk); font-family: 'BlackAcute', sans-serif; margin: 0; }
 
-body {
-    background-color: var(--milk);
-    font-family: 'BlackAcute', sans-serif;
-    margin: 0;
-    display: flex; 
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-}
+/* ШРИФТЫ ДЛЯ ЧИТАЕМОСТИ */
+input, textarea, .input-field { font-family: 'DefaultFont', sans-serif !important; font-size: 14px; }
+button, .auth-btn, .toggle-btn, h1, h2, h3, .badge-top, .nav-link { font-family: 'BlackAcute', sans-serif !important; text-transform: uppercase; }
 
-
-.badge-top {
-    background-color: var(--mint);
-    color: white;
-    padding: 10px 40px;
-    font-size: 20px;
-    z-index: 10;
-    margin-top: 20px;
-   
-    clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
-    
-
-    margin-bottom: -25px; 
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.auth-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 90vh;
-}
-
-
-.profile-card {
-    background: white;
-    width: 90%;
-    max-width: 500px;
-    margin-top: 40px;
-    padding: 30px;
-    border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    text-align: center; 
-}
-
-/* Скрытое портфолио */
+/* ФОРМА ПОРТФОЛИО */
 #portfolio-content {
-    display: none; 
+    display: none; /* УПРАВЛЯЕТСЯ ТОЛЬКО ЧЕРЕЗ JS */
+    width: 100%;
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 2px dashed var(--milk);
+    border-top: 2px dashed var(--mint);
 }
 
-.toggle-btn {
-    background: var(--mint);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 15px;
-    cursor: pointer;
-    font-family: 'BlackAcute';
-    font-size: 18px;
-    transition: 0.3s;
+.profile-card {
+    background: white; width: 95%; max-width: 500px; padding: 30px;
+    border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin: 40px auto;
 }
 
-.burger-btn { position: fixed; top: 25px; right: 25px; cursor: pointer; }
-.burger-btn span { display: block; width: 30px; height: 3px; background: var(--mint); margin: 6px 0; border-radius: 2px; }
+.input-field {
+    width: 100%; padding: 12px; margin: 10px 0; border: 2px solid var(--mint);
+    background: white; border-radius: 8px; box-sizing: border-box;
+}
 
-.side-panel { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background: white; transition: 0.5s; padding-top: 80px; z-index: 1000; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+.tags-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 15px 0; }
+.tag-item { font-size: 11px; color: var(--mint); display: flex; align-items: center; gap: 5px; }
+
+/* МЕНЮ */
+.side-panel { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background: white; transition: 0.5s; z-index: 2000; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
 .side-panel.active { right: 0; }
-.nav-link { display: block; padding: 15px 30px; text-decoration: none; color: var(--mint); margin: 10px; border-radius: 12px; }
-.active-page { background: var(--silver); color: white; }
+.burger-btn { position: fixed; top: 25px; right: 25px; z-index: 2001; cursor: pointer; }
+.burger-btn span { display: block; width: 30px; height: 3px; background: var(--mint); margin: 6px 0; }
 
-
-.auth-container {
+.badge-top {
+    background: var(--mint); color: white; padding: 10px 30px; display: inline-block;
+    clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+}
+/* ВОЗВРАЩАЕМ ЦЕНТРОВКУ И КАРТОЧКИ */
+.auth-wrapper, .auth-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 70vh; 
+    min-height: 80vh;
 }
 
 .auth-card {
     background: white;
     padding: 40px;
     border-radius: 30px;
-    width: 100%;
-    max-width: 350px;
+    width: 90%;
+    max-width: 360px;
+    margin: 40px auto; /* Центровка */
     text-align: center;
-    position: relative;
-    
-    border: 1px solid rgba(0, 0, 0, 0.1); 
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05); 
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
-.password-wrapper {
-    position: relative;
-    width: 100%;
-}
 
+/* ФИКС ИНПУТОВ (чтобы были в ряд и красивые) */
 .input-field {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100%;
     padding: 15px;
     margin: 10px 0;
-    border: 1px solid rgba(0, 0, 0, 0.08); 
-    background: #fffef9; 
-    border-radius: 15px;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 14px;
-    box-sizing: border-box;
-    color: #222; 
-    transition: 0.3s;
+    box-sizing: border-box; /* Это чтобы они не вылезали за края */
 }
 
-.input-field:focus {
-    outline: none;
-    border: 1px solid var(--mint);
-    box-shadow: 0 0 8px rgba(77, 182, 172, 0.2);
+/* ЧТОБЫ ТЕКСТ "ДОБРО ПОЖАЛОВАТЬ" НЕ ПРИЛИПАЛ */
+h2, h3 {
+    margin-bottom: 20px;
 }
-
-.input-field::placeholder {
-    color: #555; 
-    font-weight: 600;
-}
-
-
-.eye-btn {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--mint); /* Твой основной цвет */
-    cursor: pointer;
-    font-size: 18px; /* Размер иконки */
-    opacity: 0.7;
-    transition: 0.3s;
-}
-
-.eye-btn:hover {
-    opacity: 1;
-}
-
-
-
-.auth-btn {
+/* ВОЗВРАЩАЕМ КРАСИВЫЕ КНОПКИ */
+.auth-btn, .toggle-btn {
     width: 100%;
-    background: var(--mint);
-    color: white;
+    background: var(--mint); /* Твой фирменный цвет */
+    color: white !important;
     border: none;
     padding: 15px;
     border-radius: 15px;
-    font-family: 'BlackAcute';
+    font-family: 'BlackAcute', sans-serif !important;
     font-size: 18px;
     cursor: pointer;
     margin-top: 15px;
     transition: 0.3s;
-}
-
-.auth-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(77, 182, 172, 0.3);
-}
-.logout-btn-top {
-    position: fixed;
-    top: 25px;
-    left: 25px;
-    text-decoration: none;
-    color: var(--silver); 
-    font-size: 14px;
-    border: 1px solid var(--silver);
-    padding: 8px 15px;
-    border-radius: 12px;
-    transition: 0.3s;
-    z-index: 1000;
-}
-
-.logout-btn-top:hover {
-    background-color: var(--silver);
-    color: white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.auth-card h2 {
-    margin-top: 10px;
-    margin-bottom: 25px;
-    letter-spacing: 1px;
-}
-
-
-.alert-box {
-    color: #ff6b6b; /* Чуть мягче красный */
-    font-size: 11px;
-    margin: 12px 0;
     text-transform: uppercase;
-    font-family: 'BlackAcute', sans-serif;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    
-    /* Настройки анимации: 0.6 секунды, мягкий вход и выход */
-    animation: gentleShake 0.6s ease-in-out;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
 }
 
-@keyframes gentleShake {
-    0% { transform: translateX(0); }
-    15% { transform: translateX(-3px); }
-    30% { transform: translateX(2px); }
-    45% { transform: translateX(-2px); }
-    60% { transform: translateX(1px); }
-    80% { transform: translateX(-0.5px); }
-    100% { transform: translateX(0); }
+.auth-btn:hover, .toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(77, 182, 172, 0.4);
+    filter: brightness(1.1);
 }
 
-
-
-
-@keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-
-#portfolio-content {
-    display: block; /* Всегда блок, но скрываем высотой */
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.5s ease-out, opacity 0.3s ease;
-    border-top: 1px dashed var(--silver);
-    margin-top: 20px;
-}
-
-#portfolio-content.show {
-    max-height: 500px; /* С запасом для формы */
-    opacity: 1;
-    padding-top: 20px;
-}
-
-/* Сетка для хэштегов */
-.tags-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    text-align: left;
-    margin: 20px 0;
-}
-
-.tag-item {
-    font-size: 14px;
-    color: #444;
+/* ФИКС ДЛЯ СТРАНИЦЫ ВХОДА (кнопка Войти небольшая) */
+input[type="submit"].auth-btn, button.auth-btn {
     cursor: pointer;
+}
+
+/* ССЫЛКИ ПОД КНОПКАМИ (Зарегистрироваться / Войти) */
+.auth-card a, .auth-container a {
+    font-family: 'BlackAcute', sans-serif;
+    color: var(--mint);
+    text-decoration: none;
+    font-size: 12px;
+    margin-top: 15px;
+    display: inline-block;
+}
+/* ОБЕРТКА ДЛЯ ПАРОЛЯ */
+.password-wrapper {
+    position: relative; /* Чтобы глаз прилип к этому блоку */
+    width: 100%;
+}
+
+/* КНОПКА ГЛАЗА */
+.eye-btn {
+    position: absolute;
+    right: 15px; /* Отступ от правого края внутри поля */
+    top: 50%;
+    transform: translateY(-50%); /* Центровка по вертикали */
+    background: none;
+    border: none;
+    color: var(--mint);
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 10; /* Чтобы быть поверх поля */
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+}
+
+.eye-btn:hover {
+    color: var(--silver);
+}
+
+/* ЧТОБЫ ТЕКСТ ПАРОЛЯ НЕ НАЛЕЗАЛ НА ГЛАЗ */
+.password-wrapper .input-field {
+    padding-right: 45px !important; 
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 280px;
+    height: 100%;
+    background: white;
+    transition: 0.5s;
+    z-index: 2000;
+    padding: 20px 0 0 0; /* Убрали лишний паддинг */
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    
+    /* ВКЛЮЧАЕМ МАГИЮ ВЕРТИКАЛИ */
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-link {
+    display: block;
+    width: 85%; /* Чуть шире */
+    padding: 12px 20px;
+    text-decoration: none;
+    color: var(--mint) !important;
+    font-family: 'BlackAcute', sans-serif;
+    font-size: 16px; /* Чуть меньше, чтобы всё влезло */
+    margin: 5px 15px;
+    border-radius: 10px;
+    transition: 0.2s;
+    text-align: left;
+}
+
+.nav-link:hover {
+    background: var(--milk);
+    transform: translateX(5px); /* Легкий сдвиг вправо */
+}
+
+
+/* Кнопка Активной страницы */
+.active-page {
+    background: var(--mint);
+    color: white !important;
+}
+
+/* ФИКС БУРГЕРА (чтобы всегда был сверху) */
+.burger-btn {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 2001; /* Выше панели */
+    cursor: pointer;
+    background: white; /* Темная подложка, если нужно */
+    padding: 5px;
+    border-radius: 5px;
 }

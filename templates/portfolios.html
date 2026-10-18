@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>ГАЛЕРЕЯ</title>
+</head>
+<body>
+<div id="sidePane" class="side-panel">
+    <!-- Кнопка закрытия (если была) -->
+    <div class="close-btn" onclick="toggleMenu()" style="align-self: flex-end; margin-right: 20px; font-size: 30px; cursor: pointer; color: #4db6ac;">&times;</div>
+
+    <!-- Основные ссылки -->
+    <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+    <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
+    <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
+    <a href="/lessons" class="nav-link">УРОКИ</a>
+    <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+
+    <!-- Распорка, которая вытолкнет Выход вниз -->
+    <div style="flex-grow: 1;"></div>
+
+    <!-- Кнопка Выход теперь внизу -->
+    <a href="/logout" class="nav-link" style="color: #ff6b6b !important; border-top: 1px solid #eee; width: 100%; border-radius: 0; margin: 0; padding: 20px 25px;">ВЫХОД</a>
+</div>
+
+    <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <div class="badge-top">ГАЛЕРЕЯ ПРОЕКТОВ</div>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 40px;">
+            {% for item in items %}
+            <div style="background: white; width: 300px; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                {% if "t.me" in item.img_link %}
+                    <iframe src="{{ item.img_link }}" frameborder="0" style="width:100%; height:200px; border-radius: 10px;"></iframe>
+                {% else %}
+                    <img src="{{ item.img_link }}" style="width:100%; height:180px; object-fit: cover; border-radius: 10px;" onerror="this.src='https://via.placeholder.com/300x180'">
+                {% endif %}
+                <h4 style="color: #4db6ac; margin-top: 15px;">{{ item.title }}</h4>
+                <p style="font-size: 12px; font-family: 'DefaultFont';">{{ item.description }}</p>
+                <div style="font-size: 10px; color: #4db6ac;">{{ item.tags }}</div>
+                <a href="{{ item.google_link }}" target="_blank" class="auth-btn" style="display:block; text-decoration:none; text-align:center; margin-top:10px; font-size:12px; padding:10px;">СКАЧАТЬ</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
+        function toggleMenu() {
+    let pane = document.getElementById('sidePane');
+    let burger = document.querySelector('.burger-btn'); // Находим кнопку
+    
+    pane.classList.toggle('active');
+    
+    // Если меню активно — скрываем кнопку, если нет — показываем
+    if (pane.classList.contains('active')) {
+        burger.style.display = 'none';
+    } else {
+        burger.style.display = 'block';
+    }
+}
+
+    </script>
+</body>
+</html>

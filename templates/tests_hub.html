@@ -5,13 +5,27 @@
 <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
 
 <div id="sidePane" class="side-panel">
+    <!-- Кнопка закрытия (если была) -->
+    <div class="close-btn" onclick="toggleMenu()" style="align-self: flex-end; margin-right: 20px; font-size: 30px; cursor: pointer; color: #4db6ac;">&times;</div>
+
+    <!-- Основные ссылки -->
     <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-    <a href="/test_hub" class="nav-link active-page">ТЕСТЫ</a>
+    <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
+    <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
     <a href="/lessons" class="nav-link">УРОКИ</a>
     <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+
+    <!-- Распорка, которая вытолкнет Выход вниз -->
+    <div style="flex-grow: 1;"></div>
+
+    <!-- Кнопка Выход теперь внизу -->
+    <a href="/logout" class="nav-link" style="color: #ff6b6b !important; border-top: 1px solid #eee; width: 100%; border-radius: 0; margin: 0; padding: 20px 25px;">ВЫХОД</a>
 </div>
 
-<div style="display: flex; justify-content: center; margin-top: 30px;">
+
+<a href="/logout" class="logout-btn-top">ВЫХОД</a>
+
+<div style="display: flex; justify-content: center; margin-top: 20px;">
     <div class="badge-top">ВЫБЕРИ ЯЗЫК И УРОВЕНЬ</div>
 </div>
 
@@ -41,4 +55,18 @@ function startTest(lang) {
     location.href = `/start_test/${lang}/${diff}`;
 }
 function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
+function toggleMenu() {
+    let pane = document.getElementById('sidePane');
+    let burger = document.querySelector('.burger-btn'); // Находим кнопку
+    
+    pane.classList.toggle('active');
+    
+    // Если меню активно — скрываем кнопку, если нет — показываем
+    if (pane.classList.contains('active')) {
+        burger.style.display = 'none';
+    } else {
+        burger.style.display = 'block';
+    }
+}
+
 </script>
