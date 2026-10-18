@@ -324,3 +324,23 @@ body {
 .side-panel .badge-top {
     white-space: nowrap;
 }
+/* Центрируем все плашки badge-top внутри их родителей */
+.menu-header, .auth-wrapper, .lessons-header { 
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрирует плашку по горизонтали */
+    width: 100%;
+}
+
+.badge-top {
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block; /* Чтобы clip-path не ломался */
+}
+.menu-header {
+    padding-top: 60px; /* Отступ от крестика */
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: center; /* Центрируем плашку внутри меню */
+    width: 100%;
+}
