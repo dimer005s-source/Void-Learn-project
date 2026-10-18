@@ -146,60 +146,106 @@ input[type="submit"].auth-btn, button.auth-btn {
     padding-right: 45px !important; 
 }
 
+/* ГЛАВНАЯ ПАНЕЛЬ МЕНЮ */
 .side-panel {
     position: fixed;
     top: 0;
     right: -300px;
     width: 280px;
-    height: 100%;
+    height: 100vh; /* Строго на всю высоту */
     background: white;
     transition: 0.5s;
     z-index: 2000;
-    padding: 20px 0 0 0; /* Убрали лишний паддинг */
+    padding: 0; /* Убираем лишнее, будем паддинги давать обертке */
     box-shadow: -5px 0 15px rgba(0,0,0,0.1);
     
-    /* ВКЛЮЧАЕМ МАГИЮ ВЕРТИКАЛИ */
+    /* ВКЛЮЧАЕМ ФЛЕКС, ЧТОБЫ ВЫТОЛКНУТЬ ВЫХОД ВНИЗ */
     display: flex;
     flex-direction: column;
 }
 
+.side-panel.active {
+    right: 0;
+}
+
+/* ОБЕРТКА ДЛЯ ССЫЛОК (Чтобы они не липли к краям и крестику) */
+.nav-links-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px; /* Отступ от крестика вниз */
+    padding: 0 15px;
+}
+
+/* ОБЫЧНАЯ ССЫЛКА */
 .nav-link {
     display: block;
-    width: 85%; /* Чуть шире */
     padding: 12px 20px;
     text-decoration: none;
-    color: var(--mint) !important;
+    color: var(--mint) !important; /* Всегда мятные по умолчанию */
     font-family: 'BlackAcute', sans-serif;
-    font-size: 16px; /* Чуть меньше, чтобы всё влезло */
-    margin: 5px 15px;
+    font-size: 16px;
+    margin: 5px 0;
     border-radius: 10px;
     transition: 0.2s;
     text-align: left;
 }
 
 .nav-link:hover {
-    background: var(--milk);
-    transform: translateX(5px); /* Легкий сдвиг вправо */
+    background: #f0fdfc; /* Очень слабый мятный фон при наведении */
+    color: var(--mint) !important; /* Буквы ОСТАЮТСЯ мятными */
+    transform: translateX(5px);
 }
 
-
-/* Кнопка Активной страницы */
+/* АКТИВНАЯ СТРАНИЦА (Где ты сейчас находишься) */
 .active-page {
-    background: var(--mint);
-    color: white !important;
+    background: var(--mint) !important; /* Мятный фон */
+    color: white !important; /* А вот тут буквы БЕЛЫЕ на мятном фоне — так логично */
 }
 
-/* ФИКС БУРГЕРА (чтобы всегда был сверху) */
+.active-page:hover {
+    color: white !important; /* Чтобы при наведении на текущую страницу буквы не пропадали */
+}
+
+/* КНОПКА ВЫХОД (Прижимаем к полу) */
+.exit-link {
+    color: #ff6b6b !important; /* Красная */
+    border-top: 1px solid #eee;
+    padding: 20px 25px !important;
+    margin-top: auto; /* ВОТ ОНА — МАГИЯ, ТОЛКАЕТ ВНИЗ */
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'BlackAcute', sans-serif;
+}
+
+.exit-link:hover {
+    background: #fff5f5;
+}
+
+/* КРЕСТИК ЗАКРЫТИЯ */
+.close-btn {
+    z-index: 2005;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 30px;
+    color: var(--mint);
+}
+
+/* Кнопка БУРГЕР */
 .burger-btn {
     position: fixed;
     top: 25px;
     right: 25px;
-    z-index: 2001; /* Выше панели */
+    z-index: 1500; /* Чуть ниже открытой панели */
     cursor: pointer;
-    background: white; /* Темная подложка, если нужно */
+    background: white;
     padding: 5px;
     border-radius: 5px;
 }
+
 /* Делаем body гибким контейнером на весь экран */
 body {
     margin: 0;

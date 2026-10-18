@@ -7,17 +7,24 @@
     <title>РЕЙТИНГ - Void Learn</title>
 </head>
 <body>
-    <!-- СТАНДАРТНОЕ МЕНЮ -->
+       <!-- СТАНДАРТНОЕ МЕНЮ -->
     <div id="sidePane" class="side-panel">
-        <div class="close-btn" onclick="toggleMenu()" style="position:absolute; top:20px; right:20px; cursor:pointer; font-size:30px; color:#4db6ac;">&times;</div>
-        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-        <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
-        <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
-        <a href="/lessons" class="nav-link">УРОКИ</a>
-        <a href="/rating" class="nav-link active-page">РЕЙТИНГ</a>
-        <div style="flex-grow: 1;"></div>
-        <a href="/logout" class="nav-link" style="color: #ff6b6b !important; border-top: 1px solid #eee; margin: 0; padding: 20px 25px; width: 100%; border-radius: 0;">ВЫХОД</a>
+        <div class="close-btn" onclick="toggleMenu()">&times;</div>
+        
+        <div class="nav-links-wrapper"> <!-- Добавили обертку -->
+            <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+            <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
+            <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
+            <a href="/lessons" class="nav-link">УРОКИ</a>
+            <a href="/rating" class="nav-link active-page">РЕЙТИНГ</a>
+        </div>
+
+        <!-- Распорка сработает, если у side-panel будет flex -->
+        <div class="spacer" style="flex-grow: 1;"></div>
+
+        <a href="/logout" class="nav-link exit-link">ВЫХОД</a>
     </div>
+
 
     <!-- БУРГЕР -->
     <div class="burger-btn" onclick="toggleMenu()">
