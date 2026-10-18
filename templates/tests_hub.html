@@ -6,15 +6,19 @@
 <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
 
 <div id="sidePane" class="side-panel">
+    <!-- Крестик -->
     <div class="close-btn" onclick="toggleMenu()">&times;</div>
 
-    <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-    <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
-    <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
-    <a href="/lessons" class="nav-link">УРОКИ</a>
-    <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+    <!-- ВСЕ ССЫЛКИ КЛАДЁМ В ЭТУ ОБЁРТКУ -->
+    <div class="nav-links-wrapper">
+        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+        <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
+        <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
+        <a href="/lessons" class="nav-link">УРОКИ</a>
+        <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+    </div>
 
-    <!-- Никаких пустых дивов-распорок не надо, профи юзают margin-top: auto -->
+    <!-- КНОПКЕ ВЫХОД ДАЁМ КЛАСС exit-link (БЕЗ style="...") -->
     <a href="/logout" class="exit-link">ВЫХОД</a>
 </div>
 
