@@ -212,17 +212,17 @@ input[type="submit"].auth-btn, button.auth-btn {
 }
 
 
-/* Кнопка БУРГЕР */
 .burger-btn {
     position: fixed;
     top: 25px;
     right: 25px;
-    z-index: 1500; /* Чуть ниже открытой панели */
+    z-index: 1500;
     cursor: pointer;
-    background: white;
+    background: transparent !important; /* Делаем прозрачным */
     padding: 5px;
-    border-radius: 5px;
+    border: none; /* Убираем рамки, если есть */
 }
+
 
 /* Делаем body гибким контейнером на весь экран */
 body {
@@ -348,4 +348,16 @@ body {
     display: flex;
     justify-content: center; /* Центрируем плашку внутри меню */
     width: 100%;
+}
+.header-nav {
+    position: absolute;
+    top: 30px; /* Отступ от верха экрана */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    pointer-events: none; /* Чтобы хедер не перекрывал клики по кнопкам */
+}
+
+.header-nav .badge-top {
+    pointer-events: auto; /* А саму плашку можно сделать кликабельной, если надо */
 }
