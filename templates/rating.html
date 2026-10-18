@@ -60,23 +60,28 @@
                 </table>
             </div>
         </div>
-    </div>Ы
+    </div> 
 
     <script>
         function toggleMenu() {
             let pane = document.getElementById('sidePane');
             let burger = document.querySelector('.burger-btn');
             
-            if (!pane || !burger) return;
+            if (!pane) return;
 
             pane.classList.toggle('active');
             
-            if (pane.classList.contains('active')) {
-                burger.style.display = 'none';
-            } else {
-                burger.style.display = 'block';
+            // Если бургер существует, меняем его видимость
+            if (burger) {
+                if (pane.classList.contains('active')) {
+                    burger.style.opacity = '0';
+                    burger.style.pointerEvents = 'none';
+                } else {
+                    burger.style.opacity = '1';
+                    burger.style.pointerEvents = 'all';
+                }
             }
         }
-        </script>
+    </script>
 </body>
 </html>
