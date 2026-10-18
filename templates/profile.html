@@ -26,30 +26,23 @@
 </div>
 
     <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-
     <div class="auth-wrapper">
         <div class="badge-top">ЛИЧНЫЙ КАБИНЕТ</div>
+        
         <div class="profile-card">
-            <div class="profile-card">
-    <div class="user-info">
-        <h2 class="user-name">{{ current_user.fio }}</h2>
-        <div class="user-details">
-            <span class="detail-item"><b>Класс:</b> {{ current_user.grade }}</span>
-            <span class="detail-item"><b>Почта:</b> {{ current_user.email }}</span>
-        </div>
-    </div>
+            <div class="user-info">
+                <h2 class="user-name">{{ current_user.fio }}</h2>
+                <div class="user-details">
+                    <span class="detail-item"><b>Класс:</b> {{ current_user.grade }}</span>
+                    <span class="detail-item"><b>Почта:</b> {{ current_user.email }}</span>
+                </div>
+            </div>
 
-    <button class="toggle-btn" onclick="togglePortfolio()" style="margin-top:20px;">
-        ПОРТФОЛИО <span id="arrow">▼</span>
-    </button>
-    <!-- ... дальше твой код с формой ... -->
-</div>
-
-            <button class="toggle-btn" onclick="togglePortfolio()" style="margin-top:20px;">
+            <button class="toggle-btn" onclick="togglePortfolio()">
                 ПОРТФОЛИО <span id="arrow">▼</span>
             </button>
 
-            <div id="portfolio-content">
+            <div id="portfolio-content" style="display:none;">
                 <form action="/save_portfolio" method="POST">
                     <input type="text" name="title" placeholder="НАЗВАНИЕ" class="input-field" required>
                     <textarea name="description" placeholder="ОПИСАНИЕ" class="input-field" required></textarea>
@@ -67,6 +60,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
         function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
