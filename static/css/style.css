@@ -159,17 +159,19 @@ input[type="submit"].auth-btn, button.auth-btn {
     display: flex !important;
     flex-direction: column !important;
     box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    justify-content: flex-start !important; /* Выравнивание контента меню ОТ ВЕРХА */
+    align-items: stretch !important;       /* Чтобы ссылки растягивались по ширине */
 }
 
 .side-panel.active {
     right: 0;
 }
 
-/* ОБЕРТКА ССЫЛОК */
 .nav-links-wrapper {
     display: flex;
     flex-direction: column;
-    padding: 80px 20px 20px 20px; /* Отступ сверху от крестика */
+    justify-content: flex-start; /* Ссылки одна за другой сверху вниз */
+    padding: 0 10px;
 }
 
 /* КРЕСТИК */
@@ -305,13 +307,16 @@ body {
     top: 20px;
     right: 20px;
 }
-/* Контейнер для плашки в меню */
+
 .menu-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 60px; /* Отступ от крестика */
+    padding-bottom: 20px;
     width: 100%;
-    text-align: center;
-    margin-top: 60px; /* Отступ от верхнего края панели */
-    margin-bottom: 20px; /* Отступ от плашки до первой ссылки */
 }
+
 
 /* ОБЕРТКА ССЫЛОК (поднимаем их выше) */
 .nav-links-wrapper {
