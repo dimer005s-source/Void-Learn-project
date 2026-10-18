@@ -305,3 +305,22 @@ body {
     top: 20px;
     right: 20px;
 }
+/* Контейнер для плашки в меню */
+.menu-header {
+    width: 100%;
+    text-align: center;
+    margin-top: 60px; /* Отступ от верхнего края панели */
+    margin-bottom: 20px; /* Отступ от плашки до первой ссылки */
+}
+
+/* ОБЕРТКА ССЫЛОК (поднимаем их выше) */
+.nav-links-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px; /* Убрали огромный padding-top */
+}
+
+/* На всякий случай проверь этот класс, чтобы плашка не была слишком огромной в узком меню */
+.side-panel .badge-top {
+    white-space: nowrap;
+}
