@@ -1,87 +1,35 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>Вход | Void Learn</title>
-</head>
-<body>
-<div id="sidePane" class="side-panel">
-    <div class="close-btn" onclick="toggleMenu()">&times;</div>
+{% extends "base.html" %}
 
-    <!-- Твой новый переключатель в углу -->
-    <div class="theme-switcher-corner">
-        <button onclick="setTheme('light')" title="Светлая"><i class="fas fa-sun"></i></button>
-        <button onclick="setTheme('dark')" title="Темная"><i class="fas fa-moon"></i></button>
-        <button onclick="setTheme('purple')" title="Фиолетовая"><i class="fas fa-ghost"></i></button> <!-- Фиолетовый призрак -->
-    </div>
+{% block title %}ВХОД - VOID LEARN{% endblock %}
 
-    <div class="menu-header">
-        <div class="badge-top">VOID LEARN</div>
-    </div>
-<div class="auth-wrapper">
-    <div class="badge-top">ВХОД</div>
-
-
-<div class="auth-card">
-    <h2 style="color: var(--mint);">ДОБРО ПОЖАЛОВАТЬ</h2>
+{% block content %}
+<div class="profile-card">
+    <h2 style="color: var(--mint); margin-bottom: 25px;">ВХОД В СИСТЕМУ</h2>
     
-    <form method="POST">
-        <input type="email" name="email" class="input-field" placeholder="EMAIL" required>
-        
-        <div class="password-wrapper">
-            <input type="password" name="password" id="passInput" class="input-field" placeholder="ПАРОЛЬ" required>
-            <button type="button" class="eye-btn" onclick="togglePass()"><i id="eyeIcon" class="fa-regular fa-eye"></i></button>
+       <!-- Блок сочных ошибок -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="margin-bottom: 15px;">
+          {% for category, message in messages %}
+            <div style="color: #ff4444; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; border: 1px solid #ff4444; padding: 5px; border-radius: 8px; background: rgba(255, 68, 68, 0.1);">
+                {{ message }}
+            </div>
+          {% endfor %}
         </div>
+      {% endif %}
+    {% endwith %}
 
-        <button type="submit" class="auth-btn">ВОЙТИ</button>
+    <form action="/login" method="POST" style="display: flex; flex-direction: column; gap: 5px;">
+        <input type="email" name="email" placeholder="EMAIL" class="input-field" required>
+        <input type="password" name="password" placeholder="ПАРОЛЬ" class="input-field" required>
         
-        <!-- ОШИБКА ТЕПЕРЬ ТУТ, ПОД КНОПКОЙ -->
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <div class="alert-box"> {{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+        <button type="submit" class="auth-btn" style="margin-top: 15px;">ВОЙТИ ЧЕРЕЗ ПУСТОТУ</button>
     </form>
-
-    <a href="/register" style="text-decoration: none; color: var(--mint); font-size: 14px; margin-top: 25px; display: block; font-weight: bold; text-transform: uppercase;">
-    НЕТ АККАУНТА? ЗАРЕГИСТРИРОВАТЬСЯ
-</a>
-</div>
-
-</div>
-
-<script>
-    function togglePass() {
-    const passInput = document.getElementById('passInput');
-    const eyeIcon = document.getElementById('eyeIcon');
     
-    if (passInput.type === 'password') {
-        passInput.type = 'text';
-        // Меняем на "закрытый глаз"
-        eyeIcon.classList.remove('fa-eye');
-        eyeIcon.classList.add('fa-eye-slash');
-    } else {
-        passInput.type = 'password';
-        // Меняем обратно на "открытый"
-        eyeIcon.classList.remove('fa-eye-slash');
-        eyeIcon.classList.add('fa-eye');
-    }
-}
-function setTheme(themeName) {
-    document.documentElement.setAttribute('data-theme', themeName);
-    localStorage.setItem('theme', themeName); // Сохраняем выбор
-}
-
-// При загрузке страницы проверяем, какая тема была выбрана ранее
-const savedTheme = localStorage.getItem('theme') || 'light';
-setTheme(savedTheme);
-
-</script>
-
-</body>
-</html>
+    <div style="margin-top: 20px;">
+        <a href="/register" style="color: var(--mint); text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: bold;">
+            НЕТ АККАУНТА? ЗАРЕГИСТРИРОВАТЬСЯ
+        </a>
+    </div>
+</div>
+{% endblock %}

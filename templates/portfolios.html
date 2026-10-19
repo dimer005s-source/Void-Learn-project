@@ -1,82 +1,112 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=12">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <title>ГАЛЕРЕЯ - Void Learn</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <!-- БУРГЕР -->
-    <div class="burger-btn" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
+{% block title %}ГАЛЕРЕЯ - VOID LEARN{% endblock %}
+
+{% block content %}
+<div style="width: 100%; display: flex; flex-direction: column; align-items: center; padding: 100px 0 150px 0;">
+    
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="color: var(--mint); letter-spacing: 7px; margin-bottom: 15px; text-shadow: var(--neon-state); text-transform: uppercase; font-size: 2.5rem; margin: 0;">Проекты Пустоты</h1>
+        <div style="font-size: 10px; opacity: 0.5; letter-spacing: 4px; margin-top: 10px;">[ SCANNING_GLOBAL_NET... ]</div>
     </div>
 
-    <!-- МЕНЮ -->
-    <div id="sidePane" class="side-panel">
-        <div class="close-btn" onclick="toggleMenu()">&times;</div>
-
-        <div class="theme-switcher-corner">
-            <button onclick="setTheme('light')" title="Светлая"><i class="fas fa-sun"></i></button>
-            <button onclick="setTheme('dark')" title="Темная"><i class="fas fa-moon"></i></button>
-            <button onclick="setTheme('purple')" title="Фиолетовая"><i class="fas fa-ghost"></i></button>
-        </div>
-
-        <div class="menu-header">
-            <div class="badge-top">VOID LEARN</div>
-        </div>
-
-        <div class="nav-links-wrapper">
-            <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-            <a href="/portfolios" class="nav-link active-page">ГАЛЕРЕЯ</a>
-            <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
-            <a href="/lessons" class="nav-link">УРОКИ</a>
-            <a href="/rating" class="nav-link">РЕЙТИНГ</a>
-        </div>
-
-        <a href="/logout" class="exit-link">ВЫХОД</a>
+    <!-- УНИВЕРСАЛЬНЫЙ ПОИСК -->
+    <div style="width: 90%; max-width: 500px; margin-bottom: 50px; position: relative;">
+        <input type="text" id="globalSearch" onkeyup="voidScanner()" 
+               placeholder="ПОИСК: НАЗВАНИЕ, ТЭГ, АВТОР..." 
+               class="input-field" style="border-radius: 4px; border: 1px solid rgba(var(--mint-rgb), 0.3);">
+        <div id="scanLine" style="position: absolute; bottom: 15px; left: 0; width: 0; height: 1px; background: var(--mint); transition: 0.4s; box-shadow: var(--neon-state);"></div>
     </div>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
-    <div class="auth-wrapper">
-        <div class="badge-top">ГАЛЕРЕЯ ПРОЕКТОВ</div>
-        
-        <!-- Сетка проектов (тут твое наполнение галереи) -->
-        <div class="portfolio-grid" style="width: 90%; max-width: 1200px; margin-top: 30px;">
-            {% for p in portfolios %}
-            <div class="profile-card" style="margin-bottom: 20px;">
-                <h3>{{ p.title }}</h3>
-                <p>{{ p.description }}</p>
-                <div class="tags-grid">
-                    <span class="tag-item">{{ p.lang_tag }}</span>
-                    <span class="tag-item">{{ p.type_tag }}</span>
+    <!-- СЕТКА КАРТОЧЕК -->
+    <div id="portfolioGrid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; width: 95%; max-width: 1300px;">
+        {% if items %}
+            {% for item in items %}
+            <div class="portfolio-item-card" 
+                 data-title="{{ item.title | lower }}" 
+                 data-tags="{{ item.tags | lower }}" 
+                 data-author="{{ item.author_name | lower if item.author_name else 'anonymous' }}"
+                 data-desc="{{ item.description | lower if item.description else '' }}">
+                
+                <div class="card-header">
+                    <h3 class="card-title">{{ item.title }}</h3>
+                    <span class="card-tag">{{ item.tags if item.tags.startswith('#') else '#' + item.tags }}</span>
                 </div>
-                <a href="{{ p.google_link }}" target="_blank" class="auth-btn">ПОСМОТРЕТЬ</a>
+                
+                <p class="card-desc">
+                    {{ item.description if item.description else "Системный протокол: описание отсутствует." }}
+                </p>
+
+                <div class="card-footer">
+                    <div class="author-info">
+                        <i class="fas fa-user-secret" style="margin-right: 7px;"></i>
+                        {{ item.author_name }}
+                    </div>
+                    <a href="{{ item.google_link }}" target="_blank" class="card-link">ВЗЛОМАТЬ</a>
+                </div>
             </div>
             {% endfor %}
-        </div>
+        {% else %}
+            <div style="text-align: center; margin-top: 50px; opacity: 0.3;">
+                <p style="letter-spacing: 3px;">[ НИЧЕГО НЕ НАЙДЕНО ]</p>
+            </div>
+        {% endif %}
     </div>
+</div>
 
-    <script>
-        function toggleMenu() {
-            const pane = document.getElementById('sidePane');
-            const burger = document.querySelector('.burger-btn');
-            pane.classList.toggle('active');
-            if (burger) {
-                burger.style.opacity = pane.classList.contains('active') ? '0' : '1';
-                burger.style.pointerEvents = pane.classList.contains('active') ? 'none' : 'all';
+<style>
+    .portfolio-item-card {
+        width: 340px;
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(var(--mint-rgb), 0.1);
+        padding: 25px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .portfolio-item-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--mint);
+        box-shadow: var(--neon-state);
+    }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+    .card-title { margin: 0; color: var(--mint); font-size: 1.1rem; letter-spacing: 1px; }
+    .card-tag { font-size: 9px; color: var(--mint); border: 1px solid var(--mint); padding: 2px 7px; border-radius: 4px; opacity: 0.7; }
+    .card-desc { font-size: 13px; opacity: 0.6; line-height: 1.5; margin-bottom: 25px; min-height: 50px; }
+    .card-footer { border-top: 1px solid rgba(var(--mint-rgb), 0.1); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .author-info { font-size: 10px; color: var(--mint); opacity: 0.5; }
+    
+    #globalSearch:focus + #scanLine { width: 100%; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    function voidScanner() {
+        const input = document.getElementById('globalSearch').value.toLowerCase();
+        const items = document.getElementsByClassName('portfolio-item-card');
+        
+        for (let i = 0; i < items.length; i++) {
+            const title = items[i].getAttribute('data-title') || "";
+            const tags = items[i].getAttribute('data-tags') || "";
+            const author = items[i].getAttribute('data-author') || "";
+            const desc = items[i].getAttribute('data-desc') || "";
+
+            // Исправленная логика фильтра (через логическое ИЛИ)
+            if (title.includes(input) || tags.includes(input) || author.includes(input) || desc.includes(input)) {
+                items[i].style.display = "flex";
+                items[i].style.animation = "fadeIn 0.3s ease-out";
+            } else {
+                items[i].style.display = "none";
             }
         }
-
-        function setTheme(themeName) {
-            document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('theme', themeName);
-        }
-
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        setTheme(savedTheme);
-    </script>
-</body>
-</html>
+    }
+</script>
+{% endblock %}

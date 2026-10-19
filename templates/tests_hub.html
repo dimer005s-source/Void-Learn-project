@@ -1,94 +1,12 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ range(1, 9999) | random }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <title>ТЕСТЫ - Void Learn</title>
-</head>
-<body>
-
-    <!-- БУРГЕР -->
-    <div class="burger-btn" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
-    </div>
-
-    <!-- МЕНЮ -->
-    <div id="sidePane" class="side-panel">
-        <div class="close-btn" onclick="toggleMenu()">&times;</div>
-
-        <div class="theme-switcher-corner">
-            <button onclick="setTheme('light')"><i class="fas fa-sun"></i></button>
-            <button onclick="setTheme('dark')"><i class="fas fa-moon"></i></button>
-            <button onclick="setTheme('purple')"><i class="fas fa-ghost"></i></button>
-        </div>
-
-        <div class="menu-header">
-            <div class="badge-top" style="font-size: 14px; padding: 8px 20px;">VOID LEARN</div>
-        </div>
-
-        <div class="nav-links-wrapper">
-            <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-            <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
-            <a href="/test_hub" class="nav-link active-page">ТЕСТЫ</a>
-            <a href="/lessons" class="nav-link">УРОКИ</a>
-            <a href="/rating" class="nav-link">РЕЙТИНГ</a>
-        </div>
-
-        <a href="/logout" class="exit-link">ВЫХОД</a>
-    </div>
-
-    <!-- КОНТЕНТ -->
-    <div class="auth-wrapper">
-        <div class="badge-top">ВЫБЕРИ ЯЗЫК И УРОВЕНЬ</div>
-
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 40px; padding: 20px; width: 100%;">
-            {% for lang in ['Python', 'C++', 'C#', 'Java'] %}
-            <div class="auth-card" style="width: 250px; margin: 10px;">
-                <h2 style="color: var(--mint); letter-spacing: 2px;">{{ lang }}</h2>
-                
-                <div style="margin: 20px 0;">
-                    <label style="color: var(--text-alt); font-size: 12px; display: block; margin-bottom: 10px;">СЛОЖНОСТЬ:</label>
-                    <select id="diff_{{ lang }}" class="input-field" style="padding: 8px; width: 100%;">
-                        {% for i in range(1, 11) %}
-                        <option value="{{ i }}">Уровень {{ i }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <button class="auth-btn" onclick="startTest('{{ lang }}')">ЗАПУСК</button>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <script>
-        function toggleMenu() {
-            const pane = document.getElementById('sidePane');
-            const burger = document.querySelector('.burger-btn');
-            pane.classList.toggle('active');
-            if (pane.classList.contains('active')) {
-                burger.style.opacity = '0';
-                burger.style.pointerEvents = 'none';
-            } else {
-                burger.style.opacity = '1';
-                burger.style.pointerEvents = 'all';
-            }
-        }
-
-        function startTest(lang) {
-            let diff = document.getElementById('diff_' +lang).value;
-            window.location.href = `/start_test/${lang}/${diff}`;
-        }
-
-        function setTheme(themeName) {
-            document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('theme', themeName);
-        }
-
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        setTheme(savedTheme);
-    </script>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<div class="badge-top">ТЕСТ-ХАБ</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 500px; width: 90%;">
+    {% for lang in ['PYTHON', 'C++', 'JAVA', 'WEB'] %}
+    <a href="/test/{{ lang.lower() }}" class="profile-card" style="text-decoration: none; transition: 0.3s; transform: scale(1);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        <h3 style="color: var(--mint); margin: 0;">#{{ lang }}</h3>
+        <p style="font-size: 10px; color: var(--text-alt); margin-top: 5px;">ПРОВЕРИТЬ ЗНАНИЯ</p>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

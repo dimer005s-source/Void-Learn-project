@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VOID LEARN{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="star-field"></div>
+
+    <!-- КНОПКА EXIT (ВЕРХНИЙ ЛЕВЫЙ УГОЛ) -->
+    {% if current_user.is_authenticated %}
+    <div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+        <a href="/logout" class="level-badge-fixed" style="position: static; text-decoration: none; color: #ff4444; border-color: #ff4444; width: 80px; padding: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <i class="fas fa-right-from-bracket"></i> <span style="font-size: 9px;">EXIT</span>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- ПУЛЬТ ТЕМ (НИЖНИЙ ЛЕВЫЙ УГОЛ) -->
+    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 1000;">
+        <div class="level-badge-fixed" style="position: static; display: flex; align-items: center; padding: 5px 12px; gap: 15px; border-radius: 30px; width: auto;">
+            <button onclick="setTheme('light')" class="theme-mini-btn" style="cursor:pointer;"><i class="fas fa-sun"></i></button>
+            <button onclick="setTheme('dark')" class="theme-mini-btn" style="cursor:pointer;"><i class="fas fa-moon"></i></button>
+            <button onclick="setTheme('voided')" class="theme-mini-btn" style="cursor:pointer;"><i class="fas fa-atom"></i></button>
+        </div>
+    </div>
+
+    <!-- ШКАЛА ОПЫТА (Справа сверху) -->
+    <div class="level-badge-fixed" style="width: 240px; padding: 12px 15px; z-index: 1000;">
+        {% if current_user.is_authenticated %}
+            {% set total_exp = (current_user.score_py or 0) + (current_user.score_cpp or 0) + (current_user.score_cs or 0) + (current_user.score_java or 0) %}
+            {% set progress = (total_exp / 60) * 100 %}
+            {% if progress > 100 %}{% set progress = 100 %}{% endif %}
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 8px; letter-spacing: 2px; opacity: 0.7;">VOID_PROGRESS</span>
+                <span style="font-size: 11px; color: var(--mint); font-weight: bold; letter-spacing: 1px;">{{ total_exp }} <small style="font-size: 8px; opacity: 0.6;">EXP</small> / 60</span>
+            </div>
+
+            <div style="width: 100%; height: 6px; background: rgba(var(--mint-rgb), 0.1); border-radius: 10px; overflow: hidden; border: 1px solid rgba(var(--mint-rgb), 0.2);">
+                <div style="width: {{ progress }}%; height: 100%; background: var(--mint); box-shadow: 0 0 15px var(--mint); transition: width 1.5s ease-in-out;"></div>
+            </div>
+        {% else %}
+            <span style="font-size: 10px; letter-spacing: 2px;">OFFLINE_MODE</span>
+        {% endif %}
+    </div>
+
+    <main class="main-wrapper">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+    {% if request.path != '/login' and request.path != '/register' %}
+    <div class="bottom-nav">
+        <a href="/" title="Home"><i class="fas fa-house"></i></a>
+        <a href="/lessons" title="Lessons"><i class="fas fa-book-open"></i></a>
+        <a href="/portfolios" title="Portfolios"><i class="fas fa-th-large"></i></a>
+        <a href="/rating" title="Rating"><i class="fas fa-trophy"></i></a>
+        <a href="/profile" title="Profile"><i class="fas fa-user-astronaut"></i></a>
+    </div>
+    {% endif %}
+
+    <script>
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+            setTimeout(createStars, 50); 
+        }
+
+        function createStars() {
+            const field = document.getElementById('star-field');
+            if(!field) return;
+            field.innerHTML = '';
+            
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'light') return;
+
+            const starCount = currentTheme === 'voided' ? 200 : 100;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                const size = Math.random() * 2 + 1;
+                star.style.position = 'absolute';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.backgroundColor = currentTheme === 'voided' ? '#bf94ff' : 'white';
+                star.style.borderRadius = '50%';
+                star.style.opacity = Math.random();
+                star.style.boxShadow = `0 0 ${size * 2}px white`;
+                star.style.animation = `twinkle ${2 + Math.random() * 5}s infinite ease-in-out`;
+                field.appendChild(star);
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+        document.addEventListener('DOMContentLoaded', createStars);
+    </script>
+</body>
+</html>

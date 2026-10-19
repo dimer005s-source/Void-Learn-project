@@ -1,133 +1,16 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <title>Тест: {{ lang }} (Уровень {{ diff }})</title>
-</head>
-<div id="sidePane" class="side-panel">
-    <div class="close-btn" onclick="toggleMenu()">&times;</div>
-
-    <!-- Твой новый переключатель в углу -->
-    <div class="theme-switcher-corner">
-        <button onclick="setTheme('light')" title="Светлая"><i class="fas fa-sun"></i></button>
-        <button onclick="setTheme('dark')" title="Темная"><i class="fas fa-moon"></i></button>
-        <button onclick="setTheme('purple')" title="Фиолетовая"><i class="fas fa-ghost"></i></button> <!-- Фиолетовый призрак -->
-    </div>
-
-    <div class="menu-header">
-        <div class="badge-top">VOID LEARN</div>
-    </div>
-<body>
-    <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-    
-<div id="sidePane" class="side-panel">
-    <!-- Крестик -->
-    <div class="close-btn" onclick="toggleMenu()">&times;</div>
-
-    <!-- Наша новая плашка -->
-    <div class="menu-header">
-        <div class="badge-top" style="font-size: 14px; padding: 8px 20px;">VOID LEARN</div>
-    </div>
-
-    <div class="theme-switcher-wrapper">
-    <div class="theme-switcher">
-        <button onclick="setTheme('light')" title="Светлая">☀️</button>
-        <button onclick="setTheme('dark')" title="Темная">🌙</button>
-        <button onclick="setTheme('purple')" title="Фиолетовая">🔮</button>
-        <div class="theme-indicator"></div>
+{% extends "base.html" %}
+{% block content %}
+<div class="badge-top">ТЕСТИРОВАНИЕ: {{ lang_name }}</div>
+<div class="profile-card" style="width: 100%; max-width: 500px;">
+    <div id="quiz-container">
+        <h3 id="question-text" style="margin-bottom: 20px;">Загрузка вопроса...</h3>
+        <div id="answers-list" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Сюда JS накидает кнопок -->
+        </div>
     </div>
 </div>
 
-    <!-- Обёртка для ссылок -->
-    <div class="nav-links-wrapper">
-        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-        <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
-        <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
-        <a href="/lessons" class="nav-link">УРОКИ</a>
-        <a href="/rating" class="nav-link">РЕЙТИНГ</a>
-    </div>
-
-    <a href="/logout" class="exit-link">ВЫХОД</a>
-</div>
-
-
-    <div style="max-width: 700px; margin: 80px auto; text-align: center; padding: 0 20px;">
-        <div class="badge-top" id="q-header">{{ lang }} - УРОВЕНЬ {{ diff }}</div>
-        
-        <div class="auth-card" id="test-box" style="margin-top: 30px; min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
-            <h2 id="question-text" style="margin-bottom: 30px; line-height: 1.4;">Загрузка вопросов...</h2>
-            <div id="options-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <!-- Сюда JS вставит кнопки -->
-            </div>
-        </div>
-
-        <div id="result-box" class="auth-card" style="display: none; margin-top: 30px;">
-            <h2 style="color: var(--mint);">РЕЗУЛЬТАТ</h2>
-            <p id="score-text" style="font-size: 32px; margin: 20px 0;"></p>
-            <button class="auth-btn" onclick="location.href='/test_hub'">К СПИСКУ ТЕСТОВ</button>
-        </div>
-    </div>
-
-    <script>
-        // Имитация базы данных (потом сделаем загрузку через API)
-        const allQuestions = {
-            'Python': [
-                { q: "Как вывести 'Hello World'?", a: ["print()", "echo", "console.log", "printf"], c: 0 },
-                { q: "Какое ключевое слово для функций?", a: ["func", "def", "lambda", "define"], c: 1 }
-            ],
-            'C++': [
-                { q: "Как завершить строку кода?", a: [":", ".", ";", "!"], c: 2 }
-            ]
-            // Добавь остальные языки по аналогии
-        };
-
-        let currentQ = 0;
-        let score = 0;
-        const lang = "{{ lang }}";
-        const questions = allQuestions[lang] || [{q: "Вопросы еще не добавлены", h: ["Ок"], c: 0}];
-
-        function showQuestion() {
-            if (currentQ >= questions.length) {
-                showResult();
-                return;
-            }
-            let q = questions[currentQ];
-            document.getElementById('question-text').innerText = q.q;
-            let optionsHTML = '';
-            q.a.forEach((opt, i) => {
-                optionsHTML += `<button class="auth-btn" style="font-size: 14px;" onclick="answer(${i})">${opt}</button>`;
-            });
-            document.getElementById('options-box').innerHTML = optionsHTML;
-        }
-
-        function answer(idx) {
-            if (idx === questions[currentQ].c) score++;
-            currentQ++;
-            showQuestion();
-        }
-
-        function showResult() {
-            document.getElementById('test-box').style.display = 'none';
-            document.getElementById('result-box').style.display = 'block';
-            document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
-        }
-
-        function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
-        
-        showQuestion();
-
-        function setTheme(themeName) {
-    document.documentElement.setAttribute('data-theme', themeName);
-    localStorage.setItem('theme', themeName); // Сохраняем выбор
-}
-
-// При загрузке страницы проверяем, какая тема была выбрана ранее
-const savedTheme = localStorage.getItem('theme') || 'light';
-setTheme(savedTheme);
-
-    </script>
-</body>
-</html>
+<script>
+    // Тут будет твоя логика теста. Главное — вешай на кнопки ответов класс .auth-btn
+</script>
+{% endblock %}

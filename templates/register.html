@@ -1,78 +1,34 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>Регистрация | Void Learn</title>
-</head>
-<div id="sidePane" class="side-panel">
-    <div class="close-btn" onclick="toggleMenu()">&times;</div>
+{% extends "base.html" %}
 
-    <!-- Твой новый переключатель в углу -->
-    <div class="theme-switcher-corner">
-        <button onclick="setTheme('light')" title="Светлая"><i class="fas fa-sun"></i></button>
-        <button onclick="setTheme('dark')" title="Темная"><i class="fas fa-moon"></i></button>
-        <button onclick="setTheme('purple')" title="Фиолетовая"><i class="fas fa-ghost"></i></button> <!-- Фиолетовый призрак -->
-    </div>
+{% block title %}РЕГИСТРАЦИЯ - VOID LEARN{% endblock %}
 
-    <div class="menu-header">
-        <div class="badge-top">VOID LEARN</div>
-    </div>
-<body>
-    <div class="auth-wrapper">
+{% block content %}
+<div class="profile-card">
+       <h2 style="color: var(--mint); margin-bottom: 25px;">СОЗДАТЬ АККАУНТ</h2>
+
+    <!-- ВСТАВЛЯЙ СЮДА -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div style="color: #ff4444; font-size: 11px; margin-bottom: 15px; text-transform: uppercase;">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <!-- КОНЕЦ ВСТАВКИ -->
+
+    <form action="/register" method="POST" style="display: flex; flex-direction: column; gap: 5px;">
+        <input type="text" name="fio" placeholder="ФИО / ЛОГИН" class="input-field" required>
+        <input type="text" name="school_class" placeholder="КЛАСС (НАПРИМЕР: 9-А)" class="input-field" required>
+        <input type="email" name="email" placeholder="EMAIL" class="input-field" required>
+        <input type="password" name="password" placeholder="ПАРОЛЬ" class="input-field" required>
         
-        <div class="auth-card">
-            <!-- ОСТАВЛЯЕМ ТОЛЬКО ОДНУ ПЛАШКУ -->
-            <div class="badge-top">РЕГИСТРАЦИЯ</div>
-            
-            <h2 style="margin-top: 40px;">СОЗДАТЬ АККАУНТ</h2>
-
-            <!-- Блок ошибок с анимацией -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert-box">{{ message }}</div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-
-            <form method="POST">
-                <input type="text" name="fio" placeholder="ЛОГИН" required class="input-field">
-
-                <input type="text" 
-                       name="school_class" 
-                       placeholder="КЛАСС (НАПРИМЕР: 9-А)" 
-                       required 
-                       pattern="^(?:[1-9]|1[0-1])-[a-zA-Zа-яА-Я]$"
-                       class="input-field">
-
-                <input type="email" name="email" placeholder="EMAIL" required class="input-field">
-
-                <div class="password-wrapper">
-                    <input type="password" name="password" id="password" placeholder="ПАРОЛЬ" required class="input-field">
-                    <!-- Можно добавить кнопку глаза, если хочешь -->
-                </div>
-
-                <button type="submit" class="auth-btn">ЗАРЕГИСТРИРОВАТЬСЯ</button>
-            </form>
-            
-            <a href="/login" style="text-decoration: none; color: var(--mint); font-size: 14px; margin-top: 25px; display: block; font-weight: bold;">
-                УЖЕ ЕСТЬ АККАУНТ? ВОЙТИ
-            </a>
-        </div>
+        <button type="submit" class="auth-btn" style="margin-top: 15px;">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+    </form>
+    
+    <div style="margin-top: 20px;">
+        <a href="/login" style="color: var(--mint); text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: bold;">
+            УЖЕ ЕСТЬ АККАУНТ? ВОЙТИ
+        </a>
     </div>
-
-    <script>
-        function setTheme(themeName) {
-            document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('theme', themeName); // Сохраняем выбор
-        }
-
-        // При загрузке страницы проверяем, какая тема была выбрана ранее
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        setTheme(savedTheme);
-    </script>
-</body>
-</html>
+</div>
+{% endblock %}

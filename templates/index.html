@@ -1,56 +1,19 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <title>Void Learn</title>
-</head>
-<body>
-    <header class="header-nav">
-    <div class="badge-top" style="font-size: 14px; padding: 8px 20px;">VOID LEARN</div>
-</header>
-<div id="sidePane" class="side-panel">
-    <div class="close-btn" onclick="toggleMenu()">&times;</div>
+{% extends "base.html" %}
+{% block title %}VOID LEARN - ГЛАВНАЯ{% endblock %}
 
-    <!-- Твой новый переключатель в углу -->
-    <div class="theme-switcher-corner">
-        <button onclick="setTheme('light')" title="Светлая"><i class="fas fa-sun"></i></button>
-        <button onclick="setTheme('dark')" title="Темная"><i class="fas fa-moon"></i></button>
-        <button onclick="setTheme('purple')" title="Фиолетовая"><i class="fas fa-ghost"></i></button> <!-- Фиолетовый призрак -->
+{% block content %}
+<div class="profile-card" style="text-align: center; max-width: 600px;">
+    <h1 style="font-size: 60px; margin-bottom: 10px; color: var(--mint);">VOID LEARN</h1>
+    <p style="color: var(--text-alt); margin-bottom: 30px; letter-spacing: 2px;">СИСТЕМА ОБУЧЕНИЯ НОВОГО ПОКОЛЕНИЯ</p>
+    
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        <a href="/lessons" class="auth-btn" style="text-decoration: none;">НАЧАТЬ ОБУЧЕНИЕ</a>
+        {% if not current_user.is_authenticated %}
+            <div style="display: flex; gap: 10px;">
+                <a href="/login" class="auth-btn" style="flex: 1; text-decoration: none; font-size: 14px;">ВХОД</a>
+                <a href="/register" class="auth-btn" style="flex: 1; text-decoration: none; font-size: 14px;">РЕГИСТРАЦИЯ</a>
+            </div>
+        {% endif %}
     </div>
-
-    <div class="menu-header">
-        <div class="badge-top">VOID LEARN</div>
-    </div>
-
-
-    <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-
-    <div id="sidePane" class="side-panel">
-        <a href="/" class="nav-link">ГЛАВНАЯ</a>
-        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-        <a href="/register" class="nav-link">РЕГИСТРАЦИЯ</a>
-    </div>
-
-    <div class="profile-card">
-        <h1 style="color: var(--mint);">Добро пожаловать в хаб!</h1>
-        <p>Выбирай язык программирования , учи , проходи тесты.</p>
-        <button class="toggle-btn" onclick="location.href='/profile'">ПЕРЕЙТИ В ПРОФИЛЬ</button>
-    </div>
-
-    <script>
-        function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
-        function setTheme(themeName) {
-    document.documentElement.setAttribute('data-theme', themeName);
-    localStorage.setItem('theme', themeName); // Сохраняем выбор
-}
-
-// При загрузке страницы проверяем, какая тема была выбрана ранее
-const savedTheme = localStorage.getItem('theme') || 'light';
-setTheme(savedTheme);
-
-    </script>
-</body>
-</html>
+</div>
+{% endblock %}
