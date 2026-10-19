@@ -13,23 +13,23 @@
     <!-- КНОПКА EXIT (ВЕРХНИЙ ЛЕВЫЙ УГОЛ) -->
     {% if current_user.is_authenticated %}
     <div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
-        <a href="/logout" class="level-badge-fixed" style="position: static; text-decoration: none; color: #ff4444; border-color: #ff4444; width: 80px; padding: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+        <a href="/logout" class="level-badge-fixed" style="position: static; text-decoration: none; color: #ff4444; border-color: #ff4444; width: 80px; padding: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; background: rgba(255, 68, 68, 0.05);">
             <i class="fas fa-right-from-bracket"></i> <span style="font-size: 9px;">EXIT</span>
         </a>
     </div>
     {% endif %}
 
-    <!-- ПУЛЬТ ТЕМ (НИЖНИЙ ЛЕВЫЙ УГОЛ) -->
+    <!-- ПУЛЬТ ТЕМ (НИЖНИЙ ЛЕВЫЙ УГОЛ) - ФИКС БЕЛЫХ КВАДРАТОВ -->
     <div style="position: fixed; bottom: 20px; left: 20px; z-index: 1000;">
         <div class="level-badge-fixed" style="position: static; display: flex; align-items: center; padding: 5px 12px; gap: 15px; border-radius: 30px; width: auto;">
-            <button onclick="setTheme('light')" class="theme-mini-btn" style="cursor:pointer;"><i class="fas fa-sun"></i></button>
-            <button onclick="setTheme('dark')" class="theme-mini-btn" style="cursor:pointer;"><i class="fas fa-moon"></i></button>
-            <button onclick="setTheme('voided')" class="theme-mini-btn" style="cursor:pointer;"><i class="fas fa-atom"></i></button>
+            <button onclick="setTheme('light')" class="theme-mini-btn" style="background:none; border:none; color:var(--mint); cursor:pointer; padding: 5px; box-shadow: none;"><i class="fas fa-sun"></i></button>
+            <button onclick="setTheme('dark')" class="theme-mini-btn" style="background:none; border:none; color:var(--mint); cursor:pointer; padding: 5px; box-shadow: none;"><i class="fas fa-moon"></i></button>
+            <button onclick="setTheme('voided')" class="theme-mini-btn" style="background:none; border:none; color:var(--mint); cursor:pointer; padding: 5px; box-shadow: none;"><i class="fas fa-atom"></i></button>
         </div>
     </div>
 
     <!-- ШКАЛА ОПЫТА (Справа сверху) -->
-    <div class="level-badge-fixed" style="width: 240px; padding: 12px 15px; z-index: 1000;">
+    <div class="level-badge-fixed" style="width: 240px; padding: 12px 15px; z-index: 1000; position: fixed; top: 20px; right: 20px;">
         {% if current_user.is_authenticated %}
             {% set total_exp = (current_user.score_py or 0) + (current_user.score_cpp or 0) + (current_user.score_cs or 0) + (current_user.score_java or 0) %}
             {% set progress = (total_exp / 60) * 100 %}
@@ -78,9 +78,7 @@
             const currentTheme = document.documentElement.getAttribute('data-theme');
             if (currentTheme === 'light') return;
 
-            const starCount = currentTheme === 'voided' ? 200 : 100;
-
-            for (let i = 0; i < starCount; i++) {
+            for (let i = 0; i < 150; i++) {
                 const star = document.createElement('div');
                 const size = Math.random() * 2 + 1;
                 star.style.position = 'absolute';
@@ -88,7 +86,7 @@
                 star.style.top = Math.random() * 100 + '%';
                 star.style.width = size + 'px';
                 star.style.height = size + 'px';
-                star.style.backgroundColor = currentTheme === 'voided' ? '#bf94ff' : 'white';
+                star.style.backgroundColor = 'white';
                 star.style.borderRadius = '50%';
                 star.style.opacity = Math.random();
                 star.style.boxShadow = `0 0 ${size * 2}px white`;
