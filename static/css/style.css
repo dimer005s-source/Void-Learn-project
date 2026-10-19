@@ -1,363 +1,277 @@
 @font-face { font-family: 'BlackAcute'; src: url('../fonts/Black acute.ttf'); }
 @font-face { font-family: 'DefaultFont'; src: url('../fonts/default.ttf'); }
 
-:root { --milk: #fdfaf0; --mint: #4db6ac; --silver: #c0c0c0; }
+/* ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И ТЕМЫ */
+:root {
+    --bg-color: #fdfaf0;  
+    --card-bg: #ffffff;    
+    --text-main: #333333;  
+    --text-alt: #666666;     
+    --mint: #4db6ac;         
+    --exit: #ff6b6b;         
+    --gold: #ffd700; 
+}
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --text-main: #fdfaf0;
+    --text-alt: #868686;
+    --mint: #436e6a; 
+    --gold: #00ffcc; 
+}
+[data-theme="purple"] {
+    --bg-color: #1e132b;
+    --card-bg: #2d1b42;
+    --text-main: #f3e5f5;
+    --text-alt: #b39ddb;
+    --mint: #9575cd; 
+    --gold: #e1bee7; 
+}
 
-body { background-color: var(--milk); font-family: 'BlackAcute', sans-serif; margin: 0; }
+/* БАЗОВЫЕ СТИЛИ */
+body { 
+    background-color: var(--bg-color); 
+    color: var(--text-main); 
+    font-family: 'BlackAcute', sans-serif; 
+    margin: 0; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* ШРИФТЫ ДЛЯ ЧИТАЕМОСТИ */
 input, textarea, .input-field { font-family: 'DefaultFont', sans-serif !important; font-size: 14px; }
-button, .auth-btn, .toggle-btn, h1, h2, h3, .badge-top, .nav-link { font-family: 'BlackAcute', sans-serif !important; text-transform: uppercase; }
+button, .auth-btn, .toggle-btn, h1, h2, h3, .badge-top, .nav-link { 
+    font-family: 'BlackAcute', sans-serif !important; 
+    text-transform: uppercase; 
+}
 
-/* ФОРМА ПОРТФОЛИО */
-#portfolio-content {
-    display: none; /* УПРАВЛЯЕТСЯ ТОЛЬКО ЧЕРЕЗ JS */
+/* ОБЕРТКА КОНТЕНТА (Чтобы не распидорасило) */
+.auth-wrapper {
     width: 100%;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 2px dashed var(--mint);
-}
-
-.profile-card {
-    background: white; width: 95%; max-width: 500px; padding: 30px;
-    border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin: 40px auto;
-}
-
-.input-field {
-    width: 100%; padding: 12px; margin: 10px 0; border: 2px solid var(--mint);
-    background: white; border-radius: 8px; box-sizing: border-box;
-}
-
-.tags-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 15px 0; }
-.tag-item { font-size: 11px; color: var(--mint); display: flex; align-items: center; gap: 5px; }
-
-/* МЕНЮ */
-.side-panel { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background: white; transition: 0.5s; z-index: 2000; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
-.side-panel.active { right: 0; }
-.burger-btn { position: fixed; top: 25px; right: 25px; z-index: 2001; cursor: pointer; }
-.burger-btn span { display: block; width: 30px; height: 3px; background: var(--mint); margin: 6px 0; }
-
-.badge-top {
-    background: var(--mint); color: white; padding: 10px 30px; display: inline-block;
-    clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
-}
-/* ВОЗВРАЩАЕМ ЦЕНТРОВКУ И КАРТОЧКИ */
-.auth-wrapper, .auth-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 80vh;
+    z-index: 10;
 }
 
-.auth-card {
-    background: white;
-    padding: 40px;
-    border-radius: 30px;
+/* КАРТОЧКИ (ПРОФИЛЬ, ВХОД И Т.Д.) */
+.profile-card, .auth-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     width: 90%;
-    max-width: 360px;
-    margin: 40px auto; /* Центровка */
+    max-width: 450px;
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    transition: background 0.3s;
 }
 
-
-/* ФИКС ИНПУТОВ (чтобы были в ряд и красивые) */
-.input-field {
-    width: 100% !important;
-    max-width: 100%;
-    padding: 15px;
-    margin: 10px 0;
-    box-sizing: border-box; /* Это чтобы они не вылезали за края */
-}
-
-/* ЧТОБЫ ТЕКСТ "ДОБРО ПОЖАЛОВАТЬ" НЕ ПРИЛИПАЛ */
-h2, h3 {
-    margin-bottom: 20px;
-}
-/* ВОЗВРАЩАЕМ КРАСИВЫЕ КНОПКИ */
-.auth-btn, .toggle-btn {
-    width: 100%;
-    background: var(--mint); /* Твой фирменный цвет */
-    color: white !important;
-    border: none;
-    padding: 15px;
-    border-radius: 15px;
-    font-family: 'BlackAcute', sans-serif !important;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: 0.3s;
-    text-transform: uppercase;
-    display: inline-block;
-    text-decoration: none;
-    text-align: center;
-}
-
-.auth-btn:hover, .toggle-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(77, 182, 172, 0.4);
-    filter: brightness(1.1);
-}
-
-/* ФИКС ДЛЯ СТРАНИЦЫ ВХОДА (кнопка Войти небольшая) */
-input[type="submit"].auth-btn, button.auth-btn {
-    cursor: pointer;
-}
-
-/* ССЫЛКИ ПОД КНОПКАМИ (Зарегистрироваться / Войти) */
-.auth-card a, .auth-container a {
-    font-family: 'BlackAcute', sans-serif;
-    color: var(--mint);
-    text-decoration: none;
-    font-size: 12px;
-    margin-top: 15px;
-    display: inline-block;
-}
-/* ОБЕРТКА ДЛЯ ПАРОЛЯ */
-.password-wrapper {
-    position: relative; /* Чтобы глаз прилип к этому блоку */
-    width: 100%;
-}
-
-/* КНОПКА ГЛАЗА */
-.eye-btn {
-    position: absolute;
-    right: 15px; /* Отступ от правого края внутри поля */
-    top: 50%;
-    transform: translateY(-50%); /* Центровка по вертикали */
-    background: none;
-    border: none;
-    color: var(--mint);
-    cursor: pointer;
-    font-size: 18px;
-    z-index: 10; /* Чтобы быть поверх поля */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.eye-btn:hover {
-    color: var(--silver);
-}
-
-/* ЧТОБЫ ТЕКСТ ПАРОЛЯ НЕ НАЛЕЗАЛ НА ГЛАЗ */
-.password-wrapper .input-field {
-    padding-right: 45px !important; 
-}
-
-/* ПАНЕЛЬ */
+/* МЕНЮ (БОКОВАЯ ПАНЕЛЬ) */
 .side-panel {
     position: fixed;
     top: 0;
-    right: -300px;
-    width: 280px;
+    right: -320px; /* Скрыто */
+    width: 300px;
     height: 100vh;
-    background: white;
-    transition: 0.5s;
-    z-index: 5000; /* Очень высоко */
-    display: flex !important;
-    flex-direction: column !important;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-    justify-content: flex-start !important; /* Выравнивание контента меню ОТ ВЕРХА */
-    align-items: stretch !important;       /* Чтобы ссылки растягивались по ширине */
+    background: var(--card-bg);
+    transition: 0.4s ease-in-out;
+    z-index: 5000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.15);
 }
 
-.side-panel.active {
-    right: 0;
+.side-panel.active { right: 0; }
+
+.menu-header {
+    padding: 60px 20px 20px;
+    display: flex;
+    justify-content: center;
 }
 
+/* НАВИГАЦИЯ ВНУТРИ МЕНЮ */
 .nav-links-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Ссылки одна за другой сверху вниз */
-    padding: 0 10px;
+    padding: 0 20px;
 }
 
-/* КРЕСТИК */
-.close-btn {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    font-size: 35px;
-    cursor: pointer;
-    color: var(--mint);
-    z-index: 5001;
-}
-
-/* ССЫЛКИ */
 .nav-link {
-    padding: 12px 15px;
+    padding: 15px;
     text-decoration: none;
-    color: var(--mint) !important;
+    color: var(--text-main) !important;
     font-size: 18px;
-    border-radius: 10px;
-    margin-bottom: 5px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: 0.2s;
 }
 
-.nav-link:hover {
-    background: #f0fdf9;
+.nav-link:hover, .active-page {
+    background: var(--mint);
+    color: white !important;
 }
 
 /* КНОПКА ВЫХОД */
 .exit-link {
-    margin-top: auto !important; /* ВЫТАЛКИВАЕТ ВНИЗ */
-    color: #ff6b6b !important;
+    margin-top: auto;
+    color: var(--exit) !important;
     text-decoration: none;
-    padding: 25px;
-    border-top: 1px solid #eee;
+    padding: 30px;
     text-align: center;
     font-weight: bold;
-    font-size: 18px;
+    border-top: 1px solid rgba(0,0,0,0.05);
 }
 
-
+/* БУРГЕР (ПРОЗРАЧНЫЙ ФОН) */
 .burger-btn {
     position: fixed;
     top: 25px;
     right: 25px;
-    z-index: 1500;
+    z-index: 2001;
     cursor: pointer;
-    background: transparent !important; /* Делаем прозрачным */
-    padding: 5px;
-    border: none; /* Убираем рамки, если есть */
-}
-
-
-/* Делаем body гибким контейнером на весь экран */
-body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column; /* Элементы (хедер и карточка) идут друг за другом */
-    align-items: center;    /* Центрируем всё по горизонтали */
-    justify-content: center; /* Центрируем всё по вертикали */
-    min-height: 100vh;     /* Высота во весь экран телефона/моника */
-    background-color: #fdfaf0; /* Твой цвет фона из скрина */
-    font-family: sans-serif;
-}
-
-/* Настройка самой карточки (белого блока) */
-.profile-card {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    text-align: center;
-    width: 90%;          /* На мобилках займет 90% ширины */
-    max-width: 450px;    /* На компах не будет шире 450px */
-    margin-top: 20px;    /* Чтобы не липла к хедеру если он сверху */
-}
-
-/* Кнопка */
-.toggle-btn {
-    width: 100%;         /* Кнопка на всю ширину карточки */
-    padding: 12px;
-    border-radius: 10px;
+    background: transparent !important;
     border: none;
-    background-color: var(--mint); /* Твоя переменная цвета */
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-/* Обёртка для текста профиля */
-.user-info {
-    margin-bottom: 25px;
-    border-bottom: 1px solid #eee; /* Тонкая линия разделения */
-    padding-bottom: 15px;
 }
 
-/* Имя пользователя */
-.user-name {
-    color: #333;
-    font-size: 24px;
-    margin: 10px 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.burger-btn span {
+    display: block;
+    width: 30px;
+    height: 3px;
+    background: var(--mint);
+    margin: 6px 0;
+    transition: 0.3s;
 }
 
-/* Контейнер для деталей (класс и почта) */
-.user-details {
-    display: flex;
-    flex-direction: column; /* Магия: выстраиваем в колонку! */
-    gap: 10px; /* Отступ между строками */
-    color: #666;
-    font-size: 16px;
-}
-
-/* Сами строчки с инфой */
-.detail-item {
-    background: #f9f9f9;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border-left: 4px solid var(--mint); /* Твоя "мятная" полоска слева */
-    text-align: left; /* Текст слева, чтобы красиво читалось */
-}
-
-/* Чтобы кнопка портфолио была по центру */
-.toggle-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-.close-btn {
-    z-index: 1001; /* Чтобы точно был выше всего */
+/* ПЕРЕКЛЮЧАТЕЛЬ ТЕМ В УГЛУ МЕНЮ */
+.theme-switcher-corner {
     position: absolute;
     top: 20px;
-    right: 20px;
-}
-
-.menu-header {
+    left: 20px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 60px; /* Отступ от крестика */
-    padding-bottom: 20px;
-    width: 100%;
+    gap: 12px;
 }
 
-
-/* ОБЕРТКА ССЫЛОК (поднимаем их выше) */
-.nav-links-wrapper {
-    display: flex;
-    flex-direction: column;
-    padding: 0 20px; /* Убрали огромный padding-top */
+.theme-switcher-corner button {
+    background: none;
+    border: none;
+    color: var(--mint);
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-/* На всякий случай проверь этот класс, чтобы плашка не была слишком огромной в узком меню */
-.side-panel .badge-top {
-    white-space: nowrap;
-}
-/* Центрируем все плашки badge-top внутри их родителей */
-.menu-header, .auth-wrapper, .lessons-header { 
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Центрирует плашку по горизонтали */
-    width: 100%;
-}
+.theme-switcher-corner button:hover { transform: scale(1.2); }
 
+/* ПЛАШКА VOID LEARN */
 .badge-top {
+    background: var(--mint);
+    color: white;
+    padding: 10px 30px;
+    display: inline-block;
+    clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+}
+
+/* КНОПКИ */
+.auth-btn, .toggle-btn {
+    width: 100%;
+    background: var(--mint);
+    color: white !important;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+    display: block;
+    margin-top: 20px;
+}
+
+.auth-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+/* ПОЛЯ ВВОДА */
+.input-field {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 2px solid var(--mint);
+    background: var(--card-bg);
+    color: var(--text-main);
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* КРЕСТИК ЗАКРЫТИЯ */
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 35px;
+    cursor: pointer;
+    color: var(--mint);
+}
+
+/* Фикс, чтобы контент не улетал влево */
+.auth-wrapper {
+    position: relative;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
-    display: inline-block; /* Чтобы clip-path не ломался */
-}
-.menu-header {
-    padding-top: 60px; /* Отступ от крестика */
-    padding-bottom: 20px;
-    display: flex;
-    justify-content: center; /* Центрируем плашку внутри меню */
-    width: 100%;
-}
-.header-nav {
-    position: absolute;
-    top: 30px; /* Отступ от верха экрана */
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    pointer-events: none; /* Чтобы хедер не перекрывал клики по кнопкам */
 }
 
-.header-nav .badge-top {
-    pointer-events: auto; /* А саму плашку можно сделать кликабельной, если надо */
+/* Принудительно прячем панель, если JS еще не прогрузился */
+.side-panel:not(.active) {
+    right: -350px !important;
+}
+/* ЭТАЛОННАЯ ПОЛОСКА ОПЫТА */
+.level-badge-container {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    width: 250px; /* Фиксированная ширина для углового меню */
+    margin-bottom: 20px;
+}
+
+.level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-family: 'BlackAcute';
+}
+
+.level-num { color: var(--mint); font-size: 18px; }
+.exp-values { color: var(--text-alt); font-size: 10px; font-family: 'DefaultFont'; }
+
+.level-badge-fixed {
+    position: fixed;
+    top: 25px;
+    left: 25px;
+    background: var(--card-bg);
+    padding: 12px 18px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    width: 200px;
+    border: 2px solid var(--mint);
+}
+.progress-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--mint) !important; /* ПРИНУДИТЕЛЬНО МЯТНЫЙ */
+    box-shadow: 0 0 8px var(--mint);
+    transition: width 0.5s ease-in-out;
 }

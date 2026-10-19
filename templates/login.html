@@ -8,7 +8,19 @@
     <title>Вход | Void Learn</title>
 </head>
 <body>
+<div id="sidePane" class="side-panel">
+    <div class="close-btn" onclick="toggleMenu()">&times;</div>
 
+    <!-- Твой новый переключатель в углу -->
+    <div class="theme-switcher-corner">
+        <button onclick="setTheme('light')" title="Светлая"><i class="fas fa-sun"></i></button>
+        <button onclick="setTheme('dark')" title="Темная"><i class="fas fa-moon"></i></button>
+        <button onclick="setTheme('purple')" title="Фиолетовая"><i class="fas fa-ghost"></i></button> <!-- Фиолетовый призрак -->
+    </div>
+
+    <div class="menu-header">
+        <div class="badge-top">VOID LEARN</div>
+    </div>
 <div class="auth-wrapper">
     <div class="badge-top">ВХОД</div>
 
@@ -60,6 +72,15 @@
         eyeIcon.classList.add('fa-eye');
     }
 }
+function setTheme(themeName) {
+    document.documentElement.setAttribute('data-theme', themeName);
+    localStorage.setItem('theme', themeName); // Сохраняем выбор
+}
+
+// При загрузке страницы проверяем, какая тема была выбрана ранее
+const savedTheme = localStorage.getItem('theme') || 'light';
+setTheme(savedTheme);
+
 </script>
 
 </body>

@@ -4,12 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>Void Learn</title>
 </head>
 <body>
     <header class="header-nav">
     <div class="badge-top" style="font-size: 14px; padding: 8px 20px;">VOID LEARN</div>
 </header>
+<div id="sidePane" class="side-panel">
+    <div class="close-btn" onclick="toggleMenu()">&times;</div>
+
+    <!-- Твой новый переключатель в углу -->
+    <div class="theme-switcher-corner">
+        <button onclick="setTheme('light')" title="Светлая"><i class="fas fa-sun"></i></button>
+        <button onclick="setTheme('dark')" title="Темная"><i class="fas fa-moon"></i></button>
+        <button onclick="setTheme('purple')" title="Фиолетовая"><i class="fas fa-ghost"></i></button> <!-- Фиолетовый призрак -->
+    </div>
+
+    <div class="menu-header">
+        <div class="badge-top">VOID LEARN</div>
+    </div>
+
 
     <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
 
@@ -27,6 +42,15 @@
 
     <script>
         function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
+        function setTheme(themeName) {
+    document.documentElement.setAttribute('data-theme', themeName);
+    localStorage.setItem('theme', themeName); // Сохраняем выбор
+}
+
+// При загрузке страницы проверяем, какая тема была выбрана ранее
+const savedTheme = localStorage.getItem('theme') || 'light';
+setTheme(savedTheme);
+
     </script>
 </body>
 </html>

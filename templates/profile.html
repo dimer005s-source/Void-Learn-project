@@ -3,93 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
-    <title>ПРОФИЛЬ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ range(1, 9999) | random }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>ПРОФИЛЬ - Void Learn</title>
+    <style>.hidden { display: none; }</style>
 </head>
 <body>
-<div id="sidePane" class="side-panel">
-    <!-- Крестик -->
-    <div class="close-btn" onclick="toggleMenu()">&times;</div>
 
-    <!-- Наша новая плашка -->
-    <div class="menu-header">
-        <div class="badge-top" style="font-size: 14px; padding: 8px 20px;">VOID LEARN</div>
+    <div class="level-badge-fixed">
+        <div style="display: flex; justify-content: space-between; font-family: 'BlackAcute'; font-size: 14px; margin-bottom: 5px;">
+            <span style="color: var(--mint);">LEVEL {{ current_user.level or 1 }}</span>
+            <span style="opacity: 0.7;">{{ current_user.exp or 0 }}/1000</span>
+        </div>
+        <div class="progress-bg" style="height: 10px; background: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden;">
+            <div class="progress-fill" style="width: {{ (current_user.exp or 0) / 10 }}%; height: 100%; background: var(--mint); box-shadow: 0 0 10px var(--mint);"></div>
+        </div>
     </div>
-
-    <!-- Обёртка для ссылок -->
-    <div class="nav-links-wrapper">
-        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-        <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
-        <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
-        <a href="/lessons" class="nav-link">УРОКИ</a>
-        <a href="/rating" class="nav-link">РЕЙТИНГ</a>
-    </div>
-
-    <a href="/logout" class="exit-link">ВЫХОД</a>
-</div>
-
 
     <div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
 
-        <div class="auth-wrapper">
+    <div id="sidePane" class="side-panel">
+        <div class="close-btn" onclick="toggleMenu()">&times;</div>
+        <div class="theme-switcher-corner">
+            <button onclick="setTheme('light')"><i class="fas fa-sun"></i></button>
+            <button onclick="setTheme('dark')"><i class="fas fa-moon"></i></button>
+            <button onclick="setTheme('purple')"><i class="fas fa-ghost"></i></button>
+        </div>
+        <div class="menu-header"><div class="badge-top">VOID LEARN</div></div>
+        <div class="nav-links-wrapper">
+            <a href="/profile" class="nav-link active-page">ПРОФИЛЬ</a>
+            <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
+            <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
+            <a href="/lessons" class="nav-link">УРОКИ</a>
+            <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+        </div>
+        <a href="/logout" class="exit-link">ВЫХОД</a>
+    </div>
+
+    <div class="auth-wrapper">
         <div class="badge-top">ЛИЧНЫЙ КАБИНЕТ</div>
-        
+
         <div class="profile-card">
-            <!-- Блок с инфой пользователя -->
-            <div class="user-info">
-                <h2 class="user-name">{{ current_user.fio }}</h2>
-                <div class="user-details">
-                    <div class="detail-item"><b>Класс:</b> {{ current_user.grade }}</div>
-                    <div class="detail-item"><b>Почта:</b> {{ current_user.email }}</div>
-                </div>
+            <!-- ФИКС ЛОГИНА: Пробуем разные варианты -->
+            <h1 style="color: var(--mint); font-size: 50px; margin: 0; text-transform: uppercase;">
+                {% if current_user.username %}{{ current_user.username }}{% elif current_user.login %}{{ current_user.login }}{% else %}VI{% endif %}
+            </h1>
+            
+            <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 15px; margin-top: 10px; margin-bottom: 25px;">
+                <div style="font-family: 'BlackAcute'; font-size: 18px; color: var(--text-main);">КЛАСС: 9-А</div>
+                <div style="font-family: 'DefaultFont'; color: var(--text-alt); font-size: 13px;">{{ current_user.email }}</div>
             </div>
 
-            <!-- Кнопка только ОДНА -->
-            <button class="toggle-btn" onclick="togglePortfolio()">
-                ПОРТФОЛИО <span id="arrow">▼</span>
-            </button>
+            <button class="auth-btn" onclick="toggleBlock('portfolio-section')">МОИ ПРОЕКТЫ ▼</button>
+            
+            <div id="portfolio-section" class="hidden" style="margin-top: 25px; width: 100%;">
+                
+                <div style="background: var(--card-bg); border: 2px dashed var(--mint); padding: 20px; border-radius: 15px; margin-bottom: 30px;">
+                    <h3 style="color: var(--mint); margin-bottom: 15px; font-size: 14px;">ВЫЛОЖИТЬ НОВЫЙ ПРОЕКТ</h3><form action="/add_portfolio" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
+                        <input type="text" name="title" placeholder="Название проекта" class="input-field" required>
+                        <input type="text" name="google_link" placeholder="Ссылка на Google Drive" class="input-field" required>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <select name="lang_tag" class="input-field" style="flex: 1; background: var(--card-bg); color: var(--text-main);">
+                                <option value="#python">#PYTHON</option>
+                                <option value="#c++">#C++</option>
+                                <option value="#c_sharp">#C_SHARP</option>
+                                <option value="#java">#JAVA</option>
+                                <option value="#html_css">#HTML & #CSS</option>
+                            </select>
+                            <select name="type_tag" class="input-field" style="flex: 1; background: var(--card-bg); color: var(--text-main);">
+                                <option value="#site">#SITE</option>
+                                <option value="#game">#GAME</option>
+                            </select>
+                        </div>
+                        <!-- КНОПКА ТЕПЕРЬ КОНТРАСТНАЯ -->
+                        <button type="submit" class="auth-btn" style="background: var(--text-main) !important; color: var(--bg-color) !important;">ОПУБЛИКОВАТЬ</button>
+                    </form>
+                </div>
 
-            <!-- Контент портфолио (по умолчанию скрыт) -->
-            <div id="portfolio-content" style="display: none;">
-                <form action="/save_portfolio" method="POST">
-                    <input type="text" name="title" placeholder="НАЗВАНИЕ" class="input-field" required>
-                    <textarea name="description" placeholder="ОПИСАНИЕ" class="input-field" required></textarea>
-                    <input type="text" name="google_link" placeholder="ССЫЛКА (DRIVE)" class="input-field" required>
-                    <input type="text" name="img_link" placeholder="СКРИНШОТ (URL)" class="input-field">
-                    
-                    <div class="tags-grid">
-                        <label class="tag-item"><input type="radio" name="lang_tag" value="#python" required> #PYTHON</label>
-                        <label class="tag-item"><input type="radio" name="lang_tag" value="#cpp"> #C++</label>
-                        <label class="tag-item"><input type="radio" name="type_tag" value="#game" required> #GAME</label>
-                        <label class="tag-item"><input type="radio" name="type_tag" value="#site"> #SITE</label>
+                <h3 style="color: var(--mint); margin-bottom: 15px;">ВАШИ РАБОТЫ</h3>
+                {% if portfolios %}
+                    {% for p in portfolios %}
+                    <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: left; border: 1px solid rgba(0,0,0,0.05);">
+                        <div style="font-weight: bold; display: flex; justify-content: space-between;">
+                            {{ p.title }}
+                            <span style="color: var(--mint); font-size: 10px;">{{ p.lang_tag }} {{ p.type_tag }}</span>
+                        </div>
+                        <a href="{{ p.google_link }}" target="_blank" style="color: var(--mint); font-size: 12px; text-decoration: none;">СМОТРЕТЬ РАБОТУ →</a>
                     </div>
-                    <button type="submit" class="auth-btn">ВЫЛОЖИТЬ</button>
-                </form>
+                    {% endfor %}
+                {% else %}
+                    <p style="font-size: 11px; opacity: 0.5;">ПРОЕКТОВ ПОКА НЕТ</p>
+                {% endif %}
             </div>
         </div>
     </div>
 
     <script>
-        // Функция для бургер-меню
+        function toggleBlock(id) { document.getElementById(id).classList.toggle('hidden'); }
         function toggleMenu() {
-            let pane = document.getElementById('sidePane');
-            let burger = document.querySelector('.burger-btn');
+            const pane = document.getElementById('sidePane');
+            const burger = document.querySelector('.burger-btn');
             pane.classList.toggle('active');
-            burger.style.display = pane.classList.contains('active') ? 'none' : 'block';
+            if (burger) { burger.style.opacity = pane.classList.contains('active') ? '0' : '1'; }
         }
-
-        // Функция для раскрытия портфолио
-        function togglePortfolio() {
-            let content = document.getElementById('portfolio-content');
-            let arrow = document.getElementById('arrow');
-            if (content.style.display === "none") {
-                content.style.display = "block";
-                arrow.innerText = "▲";
-            } else {
-                content.style.display = "none";
-                arrow.innerText = "▼";
-            }
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
         }
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
     </script>
 </body>
 </html>

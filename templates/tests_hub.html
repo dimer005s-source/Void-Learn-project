@@ -1,74 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ range(1, 9999) | random }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>ТЕСТЫ - Void Learn</title>
 </head>
+<body>
 
-<div class="burger-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-
-<div id="sidePane" class="side-panel">
-    <!-- Крестик -->
-    <div class="close-btn" onclick="toggleMenu()">&times;</div>
-
-    <!-- Наша новая плашка -->
-    <div class="menu-header">
-        <div class="badge-top" style="font-size: 14px; padding: 8px 20px;">VOID LEARN</div>
+    <!-- БУРГЕР -->
+    <div class="burger-btn" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
     </div>
 
-    <!-- Обёртка для ссылок -->
-    <div class="nav-links-wrapper">
-        <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
-        <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
-        <a href="/test_hub" class="nav-link">ТЕСТЫ</a>
-        <a href="/lessons" class="nav-link">УРОКИ</a>
-        <a href="/rating" class="nav-link">РЕЙТИНГ</a>
-    </div>
+    <!-- МЕНЮ -->
+    <div id="sidePane" class="side-panel">
+        <div class="close-btn" onclick="toggleMenu()">&times;</div>
 
-    <a href="/logout" class="exit-link">ВЫХОД</a>
-</div>
-
-
-<div style="display: flex; justify-content: center; margin-top: 20px;">
-    <div class="badge-top">ВЫБЕРИ ЯЗЫК И УРОВЕНЬ</div>
-</div>
-
-<div style="display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-top: 50px; padding: 20px;">
-    {% for lang in ['Python', 'C++', 'C#', 'Java'] %}
-    <div class="auth-card" style="width: 250px; text-align: center;">
-        <h2 style="color: var(--mint); letter-spacing: 2px;">{{ lang }}</h2>
-        
-        <div style="margin: 20px 0;">
-            <label style="color: #888; font-size: 12px; display: block; margin-bottom: 10px;">СЛОЖНОСТЬ:</label>
-            <select id="diff_{{ lang }}" style="background: #111; color: white; border: 1px solid var(--mint); padding: 5px; border-radius: 5px; width: 100%;">
-                {% for i in range(1, 11) %}
-                <option value="{{ i }}">Уровень {{ i }}</option>
-                {% endfor %}
-            </select>
+        <div class="theme-switcher-corner">
+            <button onclick="setTheme('light')"><i class="fas fa-sun"></i></button>
+            <button onclick="setTheme('dark')"><i class="fas fa-moon"></i></button>
+            <button onclick="setTheme('purple')"><i class="fas fa-ghost"></i></button>
         </div>
 
-        <button class="auth-btn" onclick="startTest('{{ lang }}')">ЗАПУСК</button>
+        <div class="menu-header">
+            <div class="badge-top" style="font-size: 14px; padding: 8px 20px;">VOID LEARN</div>
+        </div>
+
+        <div class="nav-links-wrapper">
+            <a href="/profile" class="nav-link">ПРОФИЛЬ</a>
+            <a href="/portfolios" class="nav-link">ГАЛЕРЕЯ</a>
+            <a href="/test_hub" class="nav-link active-page">ТЕСТЫ</a>
+            <a href="/lessons" class="nav-link">УРОКИ</a>
+            <a href="/rating" class="nav-link">РЕЙТИНГ</a>
+        </div>
+
+        <a href="/logout" class="exit-link">ВЫХОД</a>
     </div>
-    {% endfor %}
-</div>
 
-<script>
-function startTest(lang) {
-    let diff = document.getElementById('diff_' + lang).value;
-    // Обязательно в кавычках, чтобы JS не поплыл
-    location.href = `/start_test/${lang}/${diff}`;
-}
-function toggleMenu() { document.getElementById('sidePane').classList.toggle('active'); }
-function toggleMenu() {
-    let pane = document.getElementById('sidePane');
-    let burger = document.querySelector('.burger-btn'); // Находим кнопку
-    
-    pane.classList.toggle('active');
-    
-    // Если меню активно — скрываем кнопку, если нет — показываем
-    if (pane.classList.contains('active')) {
-        burger.style.display = 'none';
-    } else {
-        burger.style.display = 'block';
-    }
-}
+    <!-- КОНТЕНТ -->
+    <div class="auth-wrapper">
+        <div class="badge-top">ВЫБЕРИ ЯЗЫК И УРОВЕНЬ</div>
 
-</script>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 40px; padding: 20px; width: 100%;">
+            {% for lang in ['Python', 'C++', 'C#', 'Java'] %}
+            <div class="auth-card" style="width: 250px; margin: 10px;">
+                <h2 style="color: var(--mint); letter-spacing: 2px;">{{ lang }}</h2>
+                
+                <div style="margin: 20px 0;">
+                    <label style="color: var(--text-alt); font-size: 12px; display: block; margin-bottom: 10px;">СЛОЖНОСТЬ:</label>
+                    <select id="diff_{{ lang }}" class="input-field" style="padding: 8px; width: 100%;">
+                        {% for i in range(1, 11) %}
+                        <option value="{{ i }}">Уровень {{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button class="auth-btn" onclick="startTest('{{ lang }}')">ЗАПУСК</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const pane = document.getElementById('sidePane');
+            const burger = document.querySelector('.burger-btn');
+            pane.classList.toggle('active');
+            if (pane.classList.contains('active')) {
+                burger.style.opacity = '0';
+                burger.style.pointerEvents = 'none';
+            } else {
+                burger.style.opacity = '1';
+                burger.style.pointerEvents = 'all';
+            }
+        }
+
+        function startTest(lang) {
+            let diff = document.getElementById('diff_' +lang).value;
+            window.location.href = `/start_test/${lang}/${diff}`;
+        }
+
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+    </script>
+</body>
+</html>
