@@ -1,19 +1,34 @@
 {% extends "base.html" %}
-{% block title %}VOID LEARN - ГЛАВНАЯ{% endblock %}
 
 {% block content %}
-<div class="profile-card" style="text-align: center; max-width: 600px;">
-    <h1 style="font-size: 60px; margin-bottom: 10px; color: var(--mint);">VOID LEARN</h1>
-    <p style="color: var(--text-alt); margin-bottom: 30px; letter-spacing: 2px;">СИСТЕМА ОБУЧЕНИЯ НОВОГО ПОКОЛЕНИЯ</p>
-    
-    <div style="display: flex; flex-direction: column; gap: 15px;">
-        <a href="/lessons" class="auth-btn" style="text-decoration: none;">НАЧАТЬ ОБУЧЕНИЕ</a>
-        {% if not current_user.is_authenticated %}
-            <div style="display: flex; gap: 10px;">
-                <a href="/login" class="auth-btn" style="flex: 1; text-decoration: none; font-size: 14px;">ВХОД</a>
-                <a href="/register" class="auth-btn" style="flex: 1; text-decoration: none; font-size: 14px;">РЕГИСТРАЦИЯ</a>
-            </div>
-        {% endif %}
+<div class="main-screen-content">
+    <div id="main-info-block">
+        <h1 style="font-size: 40px; color: var(--mint); letter-spacing: 5px;">VOID LEARN</h1>
+        <p style="opacity: 0.7; margin-bottom: 30px;">СИСТЕМА ОБУЧЕНИЯ БУДУЩЕГО</p>
+        <a href="/lessons" class="auth-btn">НАЧАТЬ ПУТЬ</a>
     </div>
+
+    <div id="void-text">УЧИТЬСЯ</div>
 </div>
+
+<style>
+    .main-screen-content {
+        height: 100vh; display: flex; align-items: center; justify-content: center;
+        flex-direction: column; text-align: center;
+    }
+    #main-info-block {
+        transition: all 0.8s ease;
+        padding: 40px; background: var(--card-bg); border-radius: 20px;
+        border: 1px solid var(--border-color);
+    }
+    [data-theme="voided"] #main-info-block {
+        opacity: 0; transform: scale(0.8); pointer-events: none;
+    }
+    #void-text {
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        font-size: 60px; font-weight: 900; color: white; opacity: 0;
+        letter-spacing: 15px; transition: 1.5s; pointer-events: none;
+    }
+    [data-theme="voided"] #void-text { opacity: 0.8; }
+</style>
 {% endblock %}

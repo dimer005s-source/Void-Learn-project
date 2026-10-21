@@ -1,34 +1,149 @@
 {% extends "base.html" %}
 
-{% block title %}РЕГИСТРАЦИЯ - VOID LEARN{% endblock %}
+<!-- Смещаем дыру ЖЕСТКО ВЛЕВО (300px от левого края холста) -->
+{% block bh_left %}300{% endblock %} 
+{% block bh_top %}500{% endblock %}
+
+{% block title %}SYS/REGISTRATION - VOID LEARN{% endblock %}
+
+{% block bh_left %}650{% endblock %}
+{% block bh_top %}500{% endblock %}
 
 {% block content %}
-<div class="profile-card">
-       <h2 style="color: var(--mint); margin-bottom: 25px;">СОЗДАТЬ АККАУНТ</h2>
-
-    <!-- ВСТАВЛЯЙ СЮДА -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <div style="color: #ff4444; font-size: 11px; margin-bottom: 15px; text-transform: uppercase;">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    <!-- КОНЕЦ ВСТАВКИ -->
-
-    <form action="/register" method="POST" style="display: flex; flex-direction: column; gap: 5px;">
-        <input type="text" name="fio" placeholder="ФИО / ЛОГИН" class="input-field" required>
-        <input type="text" name="school_class" placeholder="КЛАСС (НАПРИМЕР: 9-А)" class="input-field" required>
-        <input type="email" name="email" placeholder="EMAIL" class="input-field" required>
-        <input type="password" name="password" placeholder="ПАРОЛЬ" class="input-field" required>
+<div class="os-viewport">
+    <!-- Окно регистрации: right: 5%, чтобы было с краю справа -->
+    <div id="win-register" class="draggable-window login-terminal" style="top: 15%; right: 5%; width: 440px; position: absolute;">
         
-        <button type="submit" class="auth-btn" style="margin-top: 15px;">ЗАРЕГИСТРИРОВАТЬСЯ</button>
-    </form>
-    
-    <div style="margin-top: 20px;">
-        <a href="/login" style="color: var(--mint); text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: bold;">
-            УЖЕ ЕСТЬ АККАУНТ? ВОЙТИ
-        </a>
+        <div class="win-header drag-handle">
+            <span class="win-title black-acute-text white-text">SECURITY_CORE // REG_PROTOCOL</span>
+            <div class="win-controls">
+                <div class="win-dot blink-mint"></div>
+            </div>
+        </div>
+        
+        <div class="win-content terminal-dark-bg">
+            <h1 class="login-title black-acute-text glow-white">СОЗДАТЬ АККАУНТ</h1>
+
+            <div class="status-row">
+                <span class="guest-badge-inline black-acute-text">STN: NEW_ENTITY</span>
+                <span class="guest-badge-inline black-acute-text" style="color: #ffffff; border-color: #ffffff;">MODE: SETUP_</span>
+            </div>
+
+            <form action="/register" method="POST" class="terminal-form">
+                <div class="t-input-group">
+                    <span class="t-prompt">> FULL_NAME:</span>
+                    <input type="text" name="fio" class="terminal-input-field white-text" required placeholder="IDENT_NAME" spellcheck="false">
+                </div>
+
+                <div class="t-input-group">
+                    <span class="t-prompt">> CLASS_ID:</span>
+                    <input type="text" name="school_class" class="terminal-input-field white-text" required placeholder="9-А / 11-B">
+                </div>
+
+                <div class="t-input-group">
+                    <span class="t-prompt">> EMAIL_ID:</span>
+                    <input type="email" name="email" class="terminal-input-field white-text" required placeholder="example@void.com">
+                </div>
+                
+                <div class="t-input-group">
+                    <span class="t-prompt">> SECURITY_KEY:</span>
+                    <div style="display: flex; align-items: center; width: 100%;">
+                        <input type="password" id="pass-input" name="password" class="terminal-input-field white-text" required placeholder="••••••••">
+                        <i class="fas fa-eye" id="toggle-eye" style="color: var(--mint); cursor: pointer; font-size: 12px; margin-left: 10px; opacity: 0.7;"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="auth-btn terminal-submit black-acute-text">
+                    [ INITIATE_REGISTRATION ]
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <a href="/login" class="reg-link black-acute-text">> LOG_IN_EXISTING_USER_</a>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .os-viewport { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1000; }
+    
+    .login-terminal {
+        pointer-events: all;
+        background: rgba(5, 2, 10, 0.96);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 0 30px rgba(var(--mint-rgb), 0.2);
+        display: flex; flex-direction: column;
+        border-radius: 8px; overflow: hidden;
+    }
+
+    .win-header { 
+        background: rgba(var(--mint-rgb), 0.2); 
+        padding: 10px 15px; display: flex; justify-content: space-between;align-items: center; cursor: grab; border-bottom: 1px solid var(--border-color);
+    }
+
+    .white-text { color: #ffffff !important; }
+    .glow-white { color: #ffffff !important; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); font-size: 20px; margin-bottom: 10px; }
+
+    .win-content { padding: 30px; }
+    .t-prompt { font-family: monospace; font-size: 10px; color: var(--mint); font-weight: bold; min-width: 100px; }
+    
+    .terminal-input-field {
+        background: transparent; border: none; outline: none;
+        color: #ffffff; font-family: monospace; font-size: 13px; width: 100%;
+    }
+
+    .t-input-group { 
+        display: flex; align-items: center; border-bottom: 1px solid rgba(var(--mint-rgb), 0.3); 
+        padding-bottom: 6px; margin-bottom: 15px;
+    }
+
+    .status-row { display: flex; gap: 10px; margin-bottom: 25px; }
+    .guest-badge-inline { font-size: 8px; color: var(--mint); border: 1px solid var(--mint); padding: 3px 10px; }
+
+    .terminal-submit {
+        margin-top: 15px; background: transparent; 
+        border: 1px solid #ffffff; color: #ffffff;
+        padding: 14px; cursor: pointer; transition: 0.2s;
+        font-size: 11px; width: 100%;
+    }
+    .terminal-submit:hover { background: #ffffff; color: #000; box-shadow: 0 0 20px #ffffff; }
+
+    .blink-mint { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: blink 1.5s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .login-footer { margin-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px; }
+    .reg-link { color: #ffffff; text-decoration: none; font-size: 9px; opacity: 0.6; }
+</style>
+
+<script>
+// Глаз и Драг-н-дроп
+const toggleEye = document.getElementById('toggle-eye');
+const passInput = document.getElementById('pass-input');
+toggleEye.addEventListener('click', () => {
+    const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passInput.setAttribute('type', type);
+    toggleEye.classList.toggle('fa-eye');
+    toggleEye.classList.toggle('fa-eye-slash');
+});
+
+(function() {
+    const win = document.getElementById('win-register');
+    const header = win.querySelector('.drag-handle');
+    let isDragging = false;
+    let offsetX, offsetY;
+    header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - win.offsetLeft;
+        offsetY = e.clientY - win.offsetTop;
+    });
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        win.style.left = (e.clientX - offsetX) + 'px';
+        win.style.top = (e.clientY - offsetY) + 'px';
+        win.style.right = 'auto'; // Сбрасываем right при перетаскивании
+    });
+    document.addEventListener('mouseup', () => { isDragging = false; });
+})();
+</script>
 {% endblock %}

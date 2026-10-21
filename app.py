@@ -119,17 +119,70 @@ def lessons():
     java_ids = ["U2OliQwRb6c", "-1LLzZC-9cU", "CEMhFQZrVzw", "mTucAnRpxcQ", "-RXEXP4-Iic", "SdGp-5pcPeA", "wlKQBgJqPRs", "4oRyzq6Z4KE", "MzNoISmsmpk", "kbYVt54Emxw", "XU4crdUR1DI", "7UJyp2A5lQ8", "sfDFZPE9tuw", "lr8SsTi9uKI", "z_Us76GSf_Y"]
     
     modules = {
-        "Python": [{"title": f"PYTHON: УРОК {idx+1}", "video_url": f"https://www.youtube.com/embed/{vid}"} for idx, vid in enumerate(python_ids)],
-        "C++": [{"title": f"C++: УРОК {idx+1}", "video_url": f"https://www.youtube.com/embed/{vid}"} for idx, vid in enumerate(cpp_ids)],
-        "C#": [{"title": f"C#: УРОК {idx+1}", "video_url": f"https://www.youtube.com/embed/{vid}"} for idx, vid in enumerate(csharp_ids)],
-        "Java": [{"title": f"JAVA: УРОК {idx+1}", "video_url": f"https://www.youtube.com/embed/{vid}"} for idx, vid in enumerate(java_ids)]
+        "Python": [{"title": f"PYTHON: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(python_ids)],
+        "C++": [{"title": f"C++: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(cpp_ids)],
+        "C#": [{"title": f"C#: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(csharp_ids)],
+        "Java": [{"title": f"JAVA: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(java_ids)]
     }
     return render_template('lessons.html', modules=modules)
+
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+import json
+from flask import jsonify
+
+# Загрузка вопросов
+def load_questions():
+    with open("questions.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.route('/test/<lang>')
+@login_required
+def test_page(lang):
+    # Словарь для красивого отображения имен
+    display_names = {"python": "PYTHON", "cpp": "C++", "csharp": "C#", "java": "JAVA"}
+    return render_template('test.html', 
+                           lang_name=display_names.get(lang.lower(), lang.upper()), 
+                           lang_code=lang.lower())
+
+@app.route('/api/questions/<lang>/<level>')
+@login_required
+def get_questions_api(lang, level):
+    data = load_questions()
+    lang_data = data.get(lang.lower(), {})
+    questions = lang_data.get(str(level), [])
+    return jsonify(questions)
+
+@app.route('/api/save_score', methods=['POST'])
+@login_required
+def save_score():
+    data = request.json
+    lang = data.get('lang')
+    points = data.get('score', 0)
+
+    # Прибавляем очки в зависимости от языка
+    if lang == 'python':
+        current_user.score_py += points
+    elif lang == 'cpp':
+        current_user.score_cpp += points
+    elif lang == 'csharp':
+        current_user.score_cs += points
+    elif lang == 'java':
+        current_user.score_java += points
+    
+    db.session.commit()
+    return jsonify({"status": "success", "new_total": points})
+
+# Добавим также роут для ХАБА тестов, если его еще нет
+@app.route('/tests_hub')
+@login_required
+def tests_hub():
+    return render_template('tests_hub.html')
+
 
 if __name__ == "__main__":
     with app.app_context():

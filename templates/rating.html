@@ -1,12 +1,185 @@
 {% extends "base.html" %}
+
+{% block title %}LEADERBOARD - VOID LEARN{% endblock %}
+
+{% block bh_top %}50%{% endblock %}
+{% block bh_left %}65%{% endblock %}
+
 {% block content %}
-<div class="profile-card">
-    <h2 style="color: var(--mint); margin-bottom: 20px;">РЕЙТИНГ ПУСТОТЫ</h2>
-    {% for user in users %}
-    <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05);">
-        <span>{{ loop.index }}. {{ user.fio }} ({{ user.grade }})</span>
-        <span style="color: var(--mint); font-weight: bold;">{{ user.score_py + user.score_cpp + user.score_cs + user.score_java }} XP</span>
+<!-- STAR FIELD BACKGROUND -->
+<canvas id="void-stars" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;"></canvas>
+
+<div class="os-viewport" id="os-root">
+    
+    <!-- WINDOW: GLOBAL_LEADERBOARD -->
+    <div id="win-rating" class="profile-card draggable-window resizable" style="top: 100px; left: 50px; width: 450px; height: 500px; z-index: 100;">
+        <div class="win-header">
+            <span class="win-title">SYS/GLOBAL_LEADERBOARD</span>
+            <div class="win-controls">
+                <span class="win-dot" style="background: var(--mint); opacity: 0.5; width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
+            </div>
+        </div>
+        <div class="win-content scrollable">
+            <h2 style="color: var(--mint); text-align: center; font-size: 14px; letter-spacing: 4px; margin-bottom: 20px;">[ ENTITY_LIST ]</h2>
+            
+            <div class="rating-container">
+                {% for user in users %}
+                {% set total_exp = (user.score_py or 0) + (user.score_cpp or 0) + (user.score_cs or 0) + (user.score_java or 0) %}
+                <div class="rating-row" onclick="viewEntity('{{ user.id }}')" style="cursor: pointer; display: flex; justify-content: space-between; padding: 10px; border: 1px solid rgba(var(--mint-rgb), 0.1); margin-bottom: 8px; border-radius: 6px; transition: 0.3s;">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <span style="font-family: monospace; color: var(--mint); opacity: 0.5;">#{{ loop.index }}</span>
+                        <span style="font-size: 13px;">{{ user.fio }}</span>
+                    </div>
+                    <span style="color: var(--mint); font-weight: bold;">{{ total_exp }} XP</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="resizer"></div>
     </div>
-    {% endfor %}
+
+    <!-- WINDOW: ENTITY_PROFILE (MINI_PROFILE) -->
+    <div id="win-entity" class="profile-card draggable-window hidden" style="top: 150px; left: 550px; width: 320px; z-index: 200;">
+        <div class="win-header" style="background: rgba(var(--mint-rgb), 0.2);">
+            <span class="win-title" id="entity-title">ENTITY_DATA</span>
+            <button class="win-btn close" onclick="closeWin('win-entity')">×</button>
+        </div>
+        <div class="win-content" id="entity-content">
+            <!-- ДАННЫЕ ПОДГРУЗЯТСЯ ЧЕРЕЗ JS -->
+            <div class="loading">SCANNING_DATA...</div>
+        </div>
+    </div>
+
 </div>
+
+<!-- ДАННЫЕ ДЛЯ JS (скрытый блок) -->
+<script id="users-data" type="application/json">
+    {
+        {% for user in users %}
+        "{{ user.id }}": {
+            "name": "{{ user.fio }}",
+            "grade": "{{ user.grade }}",
+            "email": "{{ user.email }}",
+            "total_exp": {{ (user.score_py or 0) + (user.score_cpp or 0) + (user.score_cs or 0) + (user.score_java or 0) }},
+            "items": [
+                {% if user.portfolios %}
+                    {% for p in user.portfolios %}
+                    {"title": "{{ p.title }}", "link": "{{ p.google_link }}"}{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            ]
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    }
+</script>
+
+<style>
+    .os-viewport { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1000; }
+    .draggable-window { position: absolute; pointer-events: all; display: flex; flex-direction: column; padding: 0 !important; background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(15px); box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+    .win-header { background: rgba(var(--mint-rgb), 0.15); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; cursor: grab; border-bottom: 1px solid rgba(var(--mint-rgb), 0.2); }
+    .win-title { font-size: 10px; font-family: monospace; color: var(--mint); }
+    .win-content { padding: 15px; flex-grow: 1; overflow: hidden; }
+    .scrollable { overflow-y: auto; height: 100%; }
+    .rating-row:hover { background: rgba(var(--mint-rgb), 0.1); border-color: var(--mint); transform: translateX(5px); }
+    .win-btn { background: none; border: 1px solid rgba(var(--mint-rgb), 0.3); color: var(--mint); cursor: pointer; border-radius: 4px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+    .resizer { position: absolute; right: 0; bottom: 0; width: 12px; height: 12px; cursor: nwse-resize; background: linear-gradient(135deg, transparent 50%, var(--mint) 50%); opacity: 0.3; }
+    .hidden { display: none !important; }
+
+    /* Мини профиль стили */
+    .entity-stat { margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; }
+    .exp-bar-mini { width: 100%; height: 6px; background: rgba(var(--mint-rgb), 0.1); border-radius: 4px; overflow: hidden; margin-top: 5px; border: 1px solid rgba(var(--mint-rgb), 0.2); }
+</style>
+
+<script>
+// 1. ПОИСК И ОТОБРАЖЕНИЕ ЮЗЕРА
+function viewEntity(userId) {
+    const data = JSON.parse(document.getElementById('users-data').textContent);
+    const user = data[userId];
+    const win = document.getElementById('win-entity');
+    const content = document.getElementById('entity-content');
+
+    if (!user) return;
+
+    let portfolioHTML = user.items.length > 0 
+        ? user.items.map(p => `<a href="${p.link}" target="_blank" style="display:block; font-size: 9px; color: var(--mint); margin-top:5px; text-decoration:none;">> ${p.title}</a>`).join('')
+        : '<span style="opacity: 0.3; font-size: 9px;">NO_ACTIVE_PROJECTS</span>';
+
+    content.innerHTML = `
+        <div style="text-align: center; margin-bottom: 15px;">
+            <div style="font-size: 16px; color: var(--mint); letter-spacing: 2px;">${user.name}</div>
+            <div style="font-size: 9px; opacity: 0.5;">DECODED_IDENTITY</div>
+        </div>
+        <div class="entity-stat">
+            <div style="display: flex; justify-content: space-between; font-size: 10px; font-family: monospace;">
+                <span>CLASS:</span> <span style="color: var(--mint);">${user.grade}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; font-family: monospace; margin-top: 5px;">
+                <span>EXP:</span> <span style="color: var(--mint);">${user.total_exp}/60</span>
+            </div>
+            <div class="exp-bar-mini">
+                <div style="width: ${(user.total_exp/60)*100}%; height: 100%; background: var(--mint);"></div>
+            </div>
+        </div>
+        <div style="margin-top: 15px;">
+            <div style="font-size: 10px; border-bottom: 1px solid rgba(var(--mint-rgb), 0.2); padding-bottom: 3px; margin-bottom: 8px;">PORTFOLIO_LINKS</div>
+            ${portfolioHTML}
+        </div>
+    `;
+
+    win.classList.remove('hidden');
+    bringToFront(win);
+}
+
+function closeWin(id) { document.getElementById(id).classList.add('hidden'); }
+
+function bringToFront(el) {
+    document.querySelectorAll('.draggable-window').forEach(w => w.style.zIndex = "1000");
+    el.style.zIndex = "2000";
+}
+
+// 2. DRAG & DROP LOGIC
+document.addEventListener('mousedown', (e) => {
+    const header = e.target.closest('.win-header');
+    if (!header) return;
+    const win = header.parentElement;
+    bringToFront(win);
+    let shiftX = e.clientX - win.getBoundingClientRect().left;
+    let shiftY = e.clientY - win.getBoundingClientRect().top;function moveAt(ev) { win.style.left = ev.clientX - shiftX + 'px'; win.style.top = ev.clientY - shiftY + 'px'; }
+    document.addEventListener('mousemove', moveAt);
+    document.onmouseup = () => document.removeEventListener('mousemove', moveAt);
+});
+
+// 3. RESIZE LOGIC
+document.addEventListener('mousedown', (e) => {
+    if (!e.target.classList.contains('resizer')) return;
+    const win = e.target.parentElement;
+    const startW = win.offsetWidth, startH = win.offsetHeight, startX = e.clientX, startY = e.clientY;
+    function resizeAt(ev) { win.style.width = startW + (ev.clientX - startX) + 'px'; win.style.height = startH + (ev.clientY - startY) + 'px'; }
+    document.addEventListener('mousemove', resizeAt);
+    document.onmouseup = () => document.removeEventListener('mousemove', resizeAt);
+});
+
+// 4. STARS BACKGROUND
+const canvas = document.getElementById('void-stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize);
+resize();
+for (let i = 0; i < 200; i++) {
+    stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 1.2, opacity: Math.random(), speed: 0.01 + Math.random() * 0.02 });
+}
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`; ctx.fill();
+        s.opacity += s.speed;
+        if (s.opacity > 1 || s.opacity < 0.2) s.speed = -s.speed;
+        s.x += 0.05; if (s.x > canvas.width) s.x = 0;
+    });
+    requestAnimationFrame(draw);
+}
+draw();
+</script>
 {% endblock %}

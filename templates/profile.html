@@ -1,68 +1,247 @@
 {% extends "base.html" %}
 
-{% block title %}ПРОФИЛЬ - VOID LEARN{% endblock %}
+{% block title %}VOID_OS_TERMINAL{% endblock %}
+
+{% block bh_top %}50%{% endblock %}
+{% block bh_left %}50%{% endblock %}
 
 {% block content %}
-<div class="profile-card">
-    <h1 style="color: var(--mint); font-size: 50px; margin: 0; text-transform: uppercase; letter-spacing: 5px;">
-        {{ current_user.fio[:2] if current_user.fio else "USER" }}
-    </h1>
+<!-- ЗВЕЗДНЫЙ ФОН -->
+<canvas id="void-stars" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;"></canvas>
+
+<div class="os-viewport" id="os-root">
     
-    <div style="background: rgba(var(--mint-rgb), 0.05); padding: 15px; border-radius: 15px; margin: 15px 0 25px 0; border: 1px solid rgba(var(--mint-rgb), 0.1);">
-        <div style="font-size: 18px; font-weight: bold; letter-spacing: 2px;">КЛАСС: {{ current_user.grade }}</div>
-        <div style="color: var(--text-alt); font-size: 13px; margin-top: 5px;">{{ current_user.email }}</div>
+    <!-- WINDOW: USER_PROFILE (БАЗОВОЕ ОКНО, НЕ ЗАКРЫВАЕТСЯ) -->
+    <div id="win-profile" class="profile-card draggable-window resizable" style="top: 80px; left: 80px; width: 340px; min-width: 280px; z-index: 1000;">
+        <div class="win-header">
+            <span class="win-title">SYS/USER_INFO</span>
+            <div class="win-controls">
+                <span class="win-dot" style="background: var(--mint); opacity: 0.5; width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
+            </div>
+        </div>
+        <div class="win-content">
+            <h1 class="neon-text" style="font-size: 22px; text-align: center; margin: 10px 0; color: var(--mint);">{{ current_user.fio }}</h1>
+            
+            <div class="terminal-block">
+                <div class="t-row"><span>STATUS:</span> <span class="mint-text">ACTIVE</span></div>
+                <div class="t-row"><span>CLASS:</span> <span class="mint-text">{{ current_user.grade }}</span></div>
+                <div class="t-row"><span>IDENT:</span> <span class="mint-text">{{ current_user.email }}</span></div>
+            </div>
+
+            <button onclick="openWin('win-form')" class="auth-btn" style="width: 100%; margin-bottom: 10px;">> EXEC NEW_PROJ</button>
+            <button onclick="openWin('win-projects')" class="auth-btn" style="width: 100%; border-style: dashed;">> ACCESS_FILES</button>
+        </div>
+        <div class="resizer"></div>
     </div>
 
-    <!-- Кнопка теперь реально переключает видимость -->
-    <button class="auth-btn" onclick="let s = document.getElementById('p-section'); s.classList.toggle('hidden')" style="width: 100%; margin-bottom: 20px;">
-        МОИ ПРОЕКТЫ ▼
-    </button>
-    
-    <!-- Секция скрыта по умолчанию через class="hidden" -->
-    <div id="p-section" class="hidden">
-        <div style="border: 1px dashed var(--border-color); padding: 20px; border-radius: 15px; margin-bottom: 30px;">
-            <h3 style="color: var(--mint); margin-bottom: 15px; font-size: 12px; letter-spacing: 2px;">НОВЫЙ ПРОЕКТ</h3>
-            <form action="/save_portfolio" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" name="title" placeholder="НАЗВАНИЕ" class="input-field" required>
-                <!-- ДОБАВИЛ ОПИСАНИЕ -->
-                <textarea name="description" placeholder="ОПИСАНИЕ (ЧТО СДЕЛАЛ?)" class="input-field" style="min-height: 80px; resize: none;"></textarea>
-                <input type="text" name="google_link" placeholder="ССЫЛКА (GDRIVE)" class="input-field" required>
+    <!-- WINDOW: PROJECT_INIT (ФОРМА СОЗДАНИЯ) -->
+    <div id="win-form" class="profile-card draggable-window resizable hidden" style="top: 120px; left: 450px; width: 320px; z-index: 1001;">
+        <div class="win-header">
+            <span class="win-title">SYS/INIT_PROTOCOL</span>
+            <div class="win-controls">
+                <button class="win-btn close" onclick="closeWin('win-form')">×</button>
+            </div>
+        </div>
+        <div class="win-content">
+            <form action="/save_portfolio" method="POST">
+                <input type="text" name="title" placeholder="PROJECT_NAME" class="input-field terminal-input" required>
+                <textarea name="description" placeholder="DESCRIPTION_OF_ENTRY" class="input-field terminal-input" style="height: 60px; resize: none;"></textarea>
+                <input type="url" name="google_link" placeholder="DATA_LINK_URL" class="input-field terminal-input" required>
                 
-                <div style="display: flex; gap: 10px;">
-                    <select name="lang_tag" class="input-field" style="flex: 1;">
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <select name="lang_tag" class="input-field terminal-input custom-select">
                         <option value="#python">PYTHON</option>
                         <option value="#cpp">C++</option>
                         <option value="#csharp">C#</option>
+                        <option value="#java">JAVA</option>
                     </select>
-                    <select name="type_tag" class="input-field" style="flex: 1;">
+                    <select name="type_tag" class="input-field terminal-input custom-select">
                         <option value="#site">SITE</option>
+                        <option value="#app">APP</option>
                         <option value="#game">GAME</option>
+                        <option value="#bot">BOT</option>
                     </select>
                 </div>
-                
-                <button type="submit" class="auth-btn" style="background: var(--mint) !important; color: var(--bg-color) !important;">
-                    ОПУБЛИКОВАТЬ
-                </button>
+                <button type="submit" class="auth-btn" style="width: 100%;">[ START_DEPLOYMENT ]</button>
             </form>
         </div>
+        <div class="resizer"></div>
+    </div>
 
-        <h3 style="color: var(--mint); margin-bottom: 15px; font-size: 14px; letter-spacing: 2px;">ВАШИ РАБОТЫ</h3>
-        <div style="text-align: left; display: flex; flex-direction: column; gap: 12px;">
-            {% if portfolios %}
-                {% for p in portfolios %}
-                <div style="background: rgba(var(--mint-rgb), 0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(var(--mint-rgb), 0.1);">
-                    <div style="font-weight: bold; display: flex; justify-content: space-between;">
-                        <span>{{ p.title }}</span>
-                        <span style="color: var(--mint); font-size: 10px;">{{ p.tags }}</span>
+    <!-- WINDOW: FILE_EXPLORER (СПИСОК ПРОЕКТОВ) -->
+    <div id="win-projects" class="profile-card draggable-window resizable hidden" style="top: 80px; right: 80px; width: 380px; height: 500px; min-height: 200px; z-index: 1001;">
+        <div class="win-header">
+            <span class="win-title">SYS/LOCAL_STORAGE</span>
+            <div class="win-controls">
+                <button class="win-btn close" onclick="closeWin('win-projects')">×</button>
+            </div>
+        </div>
+        <div class="win-content scrollable">
+            {% if items %}
+                {% for item in items %}
+                <div class="item-entry">
+                    <div class="item-head">
+                        <span class="item-title">{{ item.title }}</span>
+                        <span class="item-tag">{{ item.tags }}</span>
                     </div>
-                    {% if p.description %}<p style="font-size: 11px; opacity: 0.6; margin: 8px 0;">{{ p.description }}</p>{% endif %}
-                    <a href="{{ p.google_link }}" target="_blank" style="color: var(--mint); font-size: 11px; text-decoration: none;">СМОТРЕТЬ →</a>
+                    <p class="item-desc">{{ item.description if item.description else "No metadata available..." }}</p>
+                    <a href="{{ item.google_link }}" target="_blank" class="card-link" style="width: 100%; padding: 5px; font-size: 9px; text-align: center;">MOUNT_DRIVE</a>
                 </div>
                 {% endfor %}
             {% else %}
-                <p style="font-size: 11px; opacity: 0.5; text-align: center;">ПРОЕКТОВ ПОКА НЕТ</p>
+                <div class="empty-state" style="text-align: center; opacity: 0.3; margin-top: 50px; font-size: 10px;">NO_DATA_FOUND_IN_SECTOR</div>
             {% endif %}
         </div>
+        <div class="resizer"></div>
     </div>
 </div>
+
+<style>
+    /* Глобальный вьюпорт */
+    .os-viewport {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        pointer-events: none; z-index: 1000;
+    }
+
+    /* Окна терминала */
+    .draggable-window {
+        position: absolute; pointer-events: all;
+        display: flex; flex-direction: column;
+        padding: 0 !important; overflow: visible;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        backdrop-filter: blur(15px);
+    }
+
+    .win-header {
+        background: rgba(var(--mint-rgb), 0.15);
+        padding: 10px 15px; display: flex; justify-content: space-between;
+        align-items: center; cursor: grab;
+        border-bottom: 1px solid rgba(var(--mint-rgb), 0.2);
+    }
+
+    .win-title { font-size: 10px; font-family: monospace; color: var(--mint); letter-spacing: 1px; }
+
+    .win-btn {
+        background: none; border: 1px solid rgba(var(--mint-rgb), 0.3);
+        color: var(--mint); cursor: pointer; border-radius: 4px;
+        width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+    }
+    .win-btn:hover { background: var(--mint); color: #000; }
+
+    /* Контент внутри */
+    .win-content { padding: 15px; flex-grow: 1; overflow: hidden; }
+    .scrollable { overflow-y: auto; height: 100%; padding-right: 5px; }
+    .scrollable::-webkit-scrollbar { width: 4px; }
+    .scrollable::-webkit-scrollbar-thumb { background: var(--mint); border-radius: 10px; }
+
+    /* Инпуты и Селекторы */
+    .terminal-input { background: rgba(0,0,0,0.3) !important; color: var(--mint) !important; border: 1px solid rgba(var(--mint-rgb), 0.2) !important; text-align: left !important; }
+    .custom-select { appearance: none; cursor: pointer; padding: 5px 10px !important; }
+    .custom-select option { background-color: #0d0216; color: var(--mint); }
+
+    /* Декоративные блоки */
+    .terminal-block { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(var(--mint-rgb), 0.1); }
+    .t-row { display: flex; justify-content: space-between; font-size: 11px; font-family: monospace; margin: 4px 0; }
+    .mint-text { color: var(--mint); font-weight: bold; }
+    
+    .item-entry { border: 1px solid rgba(var(--mint-rgb), 0.1); padding: 12px; border-radius: 6px; margin-bottom: 10px; background: rgba(var(--mint-rgb), 0.05); }
+    .item-title { font-size: 14px; color: var(--mint); font-weight: bold; }
+
+    /* Уголок ресайза */
+    .resizer {
+        position: absolute; right: 0; bottom: 0; width: 14px; height: 14px;
+        cursor: nwse-resize; background: linear-gradient(135deg, transparent 50%, var(--mint) 50%);opacity: 0.4; z-index: 10;
+    }
+
+    .hidden { display: none !important; }
+    #black-hole-root { z-index: 0 !important; }
+</style>
+
+<script>
+// 1. УПРАВЛЕНИЕ ОКНАМИ
+function openWin(id) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.classList.remove('hidden');
+        bringToFront(el);
+    }
+}
+function closeWin(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+}
+function bringToFront(el) {
+    document.querySelectorAll('.draggable-window').forEach(w => w.style.zIndex = "1000");
+    el.style.zIndex = "2000";
+}
+
+// 2. DRAG & DROP
+document.addEventListener('mousedown', (e) => {
+    const header = e.target.closest('.win-header');
+    if (!header) return;
+    const win = header.parentElement;
+    bringToFront(win);
+    let shiftX = e.clientX - win.getBoundingClientRect().left;
+    let shiftY = e.clientY - win.getBoundingClientRect().top;
+    function moveHandler(ev) {
+        win.style.left = ev.clientX - shiftX + 'px';
+        win.style.top = ev.clientY - shiftY + 'px';
+    }
+    document.addEventListener('mousemove', moveHandler);
+    document.onmouseup = () => document.removeEventListener('mousemove', moveHandler);
+});
+
+// 3. RESIZE
+document.addEventListener('mousedown', (e) => {
+    if (!e.target.classList.contains('resizer')) return;
+    const win = e.target.parentElement;
+    const startW = win.offsetWidth;
+    const startH = win.offsetHeight;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    function resizeHandler(ev) {
+        win.style.width = startW + (ev.clientX - startX) + 'px';
+        win.style.height = startH + (ev.clientY - startY) + 'px';
+    }
+    document.addEventListener('mousemove', resizeHandler);
+    document.onmouseup = () => document.removeEventListener('mousemove', resizeHandler);
+});
+
+// 4. ГЕНЕРАЦИЯ ЗВЕЗД
+const canvas = document.getElementById('void-stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+for (let i = 0; i < 200; i++) {
+    stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 1.5,
+        opacity: Math.random(),
+        speed: 0.005 + Math.random() * 0.02
+    });
+}
+function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+        ctx.fill();
+        s.opacity += s.speed;
+        if (s.opacity > 1 || s.opacity < 0.1) s.speed = -s.speed;
+        s.x += 0.03;
+        if (s.x > canvas.width) s.x = 0;
+    });
+    requestAnimationFrame(drawStars);
+}
+drawStars();
+</script>
 {% endblock %}

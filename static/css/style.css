@@ -1,126 +1,261 @@
+/* --- 1. ПРАВИЛЬНЫЕ ПЕРЕМЕННЫЕ (СВЯЗКА ТЕМ) --- */
 :root {
+    /* Белая тема по умолчанию */
+    --bg-color: #ffffff; 
+    --card-bg: rgba(255, 255, 255, 0.82); 
+    --mint: #00897b; 
+    --mint-rgb: 0, 137, 123;
+    --text-main: #1a1a1a;
+    --border-color: rgba(0, 137, 123, 0.3);
     --main-thickness: 1.5px;
-    --bg-color: #fdfaf0;
-    --card-bg: rgba(255, 255, 255, 0.85);
-    --mint: #4db6ac;
-    --mint-rgb: 77, 182, 172;
-    --text-main: #333333;
-    --border-color: var(--mint);
-    --neon-state: none;
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    --neon-state: 0 5px 15px rgba(0,0,0,0.08);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --widget-label: #666;
 }
 
 [data-theme="dark"] {
-    --bg-color: #0f0f12;
-    --card-bg: rgba(25, 25, 30, 0.9);
+    --bg-color: #0d0d0f;
+    --card-bg: rgba(20, 20, 25, 0.82);
     --mint: #00ffcc;
     --mint-rgb: 0, 255, 204;
     --text-main: #e0e0e0;
     --border-color: var(--mint);
     --neon-state: 0 0 12px rgba(0, 255, 204, 0.4);
+    --card-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    --widget-label: #888;
 }
 
 [data-theme="voided"] {
-    --bg-color: #05010a;
-    --card-bg: rgba(15, 5, 25, 0.7);
-    --mint: #bf94ff;
-    --mint-rgb: 191, 148, 255;
+    --bg-color: #000000;
+    --card-bg: rgba(14, 5, 24, 0.7);
+    --mint: #bc13fe; /* Твой фиолетовый */
+    --mint-rgb: 188, 19, 254;
     --text-main: #f3e5f5;
     --border-color: #bc13fe;
-    --neon-state: 0 0 15px rgba(191, 148, 255, 0.5);
+    --neon-state: 0 0 15px rgba(188, 19, 254, 0.5);
     --card-shadow: 0 0 30px rgba(188, 19, 254, 0.15);
+    --widget-label: #bc13fe77;
 }
 
-* { box-sizing: border-box; transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s; }
 
-body { 
-    margin: 0; min-height: 100vh; 
-    background-color: var(--bg-color); color: var(--text-main);
-    font-family: 'Segoe UI', 'Caleb', monospace; overflow-x: hidden;
-    position: relative;
-    letter-spacing: 0.5px;
+* {
+    box-sizing: border-box;
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease, transform 0.3s ease;
 }
 
-#star-field { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-
-/* Центровка контента */
-.main-wrapper {
-    display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh; width: 100%; padding: 60px 0 120px 0;
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', 'Caleb', monospace;
+    margin: 0;
+    overflow-x: hidden;
 }
 
-/* Карточки профиля и проектов */
-.profile-card, .portfolio-item-card {
-    background: var(--card-bg); padding: 30px; border-radius: 12px;
-    border: var(--main-thickness) solid var(--border-color);
-    box-shadow: var(--card-shadow); 
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+/* UI-элементы */
+.level-badge-fixed {
+    background: var(--card-bg);
+    border: 1px solid rgba(var(--mint-rgb), 0.3); /* ИСПОЛЬЗУЕМ RGB переменные */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Для старых браузеров */
+    box-shadow: var(--card-shadow);
 }
 
-/* Стилизация инпутов */
-.input-field {
-    width: 100%; background: rgba(var(--mint-rgb), 0.05); color: var(--text-main);
-    padding: 14px; border-radius: 8px; margin-bottom: 15px;
-    border: var(--main-thickness) solid rgba(var(--mint-rgb), 0.3); 
-    outline: none; text-align: center; font-family: inherit;
+.bottom-nav {
+    position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 20px; padding: 10px 25px;
+    background: var(--card-bg); border: 1px solid rgba(var(--mint-rgb), 0.3); /* ИСПОЛЬЗУЕМ RGB переменные */
+    border-radius: 40px; backdrop-filter: blur(15px);
+    box-shadow: var(--card-shadow);
 }
 
-.input-field:focus {
-    border-color: var(--mint);
-    box-shadow: var(--neon-state);
+.bottom-nav a {
+    color: var(--text-main); font-size: 20px; transition: 0.3s; text-decoration: none;
+    opacity: 0.7; /* По умолчанию менее заметны */
 }
+.bottom-nav a:hover {
+    color: var(--mint); transform: scale(1.1); opacity: 1;
+}
+
+.theme-option-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    
+    /* ВОТ ЭТА СТРОЧКА: */
+    color: var(--mint) !important; 
+    
+    opacity: 0.7;
+}
+
+.theme-option-btn:hover {
+    opacity: 1;
+    transform: scale(1.2) rotate(15deg);
+}
+
+/* Черная дыра */
+.black-hole-hidden { opacity: 0; transition: opacity 1.5s ease; pointer-events: none; }
+[data-theme="voided"] .black-hole-hidden { opacity: 1; }
 
 /* Кнопки */
 .auth-btn, .glow-button, .card-link {
     display: inline-flex; align-items: center; justify-content: center;
     background: transparent; color: var(--mint);
-    padding: 12px 24px; border-radius: 8px; 
+    padding: 12px 24px; border-radius: 8px;
     border: var(--main-thickness) solid var(--border-color);
-    font-weight: bold; cursor: pointer; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    text-transform: uppercase; text-decoration: none; font-size: 11px; letter-spacing: 2px;
+    font-weight: bold; cursor: pointer;text-transform: uppercase; text-decoration: none; font-size: 11px; letter-spacing: 2px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.auth-btn:hover, .card-link:hover { 
-    background: var(--mint); color: #000;
+.auth-btn:hover, .glow-button:hover, .card-link:hover {
+    background: var(--mint); color: var(--bg-color); /* Меняем цвет текста на фон */
     box-shadow: var(--neon-state); transform: translateY(-3px);
 }
-
-/* Нижняя навигация */
-.bottom-nav {
-    position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; gap: 15px; padding: 10px 20px;
-    background: var(--card-bg); border: 1px solid rgba(var(--mint-rgb), 0.3);
-    border-radius: 40px; backdrop-filter: blur(15px); z-index: 1000;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+@font-face {
+    font-family: 'BlackAcute';
+    src: url('../fonts/Black acute.ttf') format('truetype');
+}
+.system-status-legacy {
+    position: fixed;
+    bottom: 80px; 
+    left: 20px;
+    z-index: 99999;
+    font-family: 'BlackAcute', 'Black acute', monospace; /* Юзает твой шрифт */
+    font-size: 10px;
+    color: var(--mint); /* Теперь меняется вместе с темой! */
+    pointer-events: none;
+    line-height: 1.5;
+    background: var(--card-bg); /* Тоже адаптируется */
+    padding: 8px 12px;
+    border-left: 2px solid var(--mint);
+    backdrop-filter: blur(5px);
+    border-radius: 0 4px 4px 0;
 }
 
-.bottom-nav a {
-    color: var(--text-main); opacity: 0.6; font-size: 18px;
-    transition: 0.3s; width: 40px; height: 40px;
-    display: flex; align-items: center; justify-content: center;
+.status-row { 
+    display: flex; 
+    justify-content: space-between; 
+    gap: 20px; 
 }
 
-.bottom-nav a:hover { opacity: 1; color: var(--mint); transform: scale(1.2); }
-
-/* Шкала опыта */
-.level-badge-fixed {
-    position: fixed; top: 20px; right: 20px; 
-    background: var(--card-bg); border: 1px solid rgba(var(--mint-rgb), 0.3);
-    border-radius: 8px; backdrop-filter: blur(10px); z-index: 999;
+.status-row span:first-child {
+    color: var(--widget-label); /* Мягкий цвет для подписей */
 }
 
-/* Анимации */
-@keyframes twinkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.2); }
+.status-row .val { 
+    color: var(--text-main); 
+    font-weight: bold;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.ready-txt { 
+    color: #4caf50 !important; /* Зеленый старт, который виден везде */
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.4); 
 }
 
-/* Прочие фиксы */
-.hidden { display: none !important; }
-.theme-mini-btn { color: var(--mint); opacity: 0.7; transition: 0.3s; }
-.theme-mini-btn:hover { opacity: 1; transform: rotate(15deg); }
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+.video-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: 0.4s;
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--neon-state);
+}
+
+.video-preview {
+    position: relative;
+    cursor: pointer;
+}
+
+.video-preview img { width: 100%; display: block; }
+
+.play-btn {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 40px; color: var(--mint); opacity: 0.8; transition: 0.3s;
+}
+
+.video-card:hover .play-btn { opacity: 1; scale: 1.2; }
+
+.video-info { padding: 15px; }
+
+.test-link-btn {
+    display: block; margin-top: 15px; text-align: center;
+    padding: 8px; border: 1px solid var(--mint);
+    color: var(--mint); text-decoration: none; font-size: 10px;
+}
+
+.test-link-btn:hover { background: var(--mint); color: #000; }
+
+/* Модалка */
+.video-modal {
+    display: none; position: fixed; z-index: 100000; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+    align-items: center; justify-content: center;
+}
+
+.modal-content { width: 80%; max-width: 900px; aspect-ratio: 16/9; }
+.modal-content iframe { width: 100%; height: 100%; }
+/* Сетка для Тест-хаба */
+.tests-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 500px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 480px) {
+    .tests-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Стилизация карточки теста */
+.profile-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: scale(1.05);
+    border-color: var(--mint);
+    box-shadow: var(--neon-state);
+}
+
+.profile-card h3 {
+    color: var(--mint);
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.profile-card p {
+    font-size: 10px;
+    color: var(--widget-label);
+    margin-top: 8px;
+    margin-bottom: 0;
+    letter-spacing: 1px;
+}

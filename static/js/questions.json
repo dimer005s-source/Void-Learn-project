@@ -1,0 +1,116 @@
+{
+  "python": {
+    "1": [
+      {
+        "q": "КАКОЙ ОПЕРАТОР ИСПОЛЬЗУЕТСЯ ДЛЯ ВЫВОДА В КОНСОЛЬ?",
+        "a": ["PRINT", "OUTPUT", "WRITE", "LOG"],
+        "right": "PRINT"
+      },
+      {
+        "q": "КАК СОЗДАТЬ ПЕРЕМЕННУЮ СО ЗНАЧЕНИЕМ 5?",
+        "a": ["X = 5", "VAR X = 5", "INT X = 5", "X := 5"],
+        "right": "X = 5"
+      }
+    ],
+    "2": [
+      {
+        "q": "ЧТО ВЕРНЕТ ТИП TYPE(5.5)?",
+        "a": ["INT", "FLOAT", "STR", "DOUBLE"],
+        "right": "FLOAT"
+      }
+    ]
+  },
+  "cpp": {
+    "1": [
+      {
+        "q": "КАКАЯ БИБЛИОТЕКА НУЖНА ДЛЯ ВВОДА/ВЫВОДА?",
+        "a": ["IOSTREAM", "STDIO.H", "STRING", "MATH"],
+        "right": "IOSTREAM"
+      }
+    ]
+  },
+  "csharp": {
+    "1": [
+      {
+        "q": "ЧТО ТАКОЕ C#?",
+        "a": ["ЯЗЫК ПРОГРАММИРОВАНИЯ", "ЯЗЫК РАЗМЕТКИ", "БАЗА ДАННЫХ", "ГРАФИЧЕСКИЙ РЕДАКТОР"],
+        "right": "ЯЗЫК ПРОГРАММИРОВАНИЯ"
+      },
+      {
+        "q": "КАКАЯ КОМАНДА ВЫВОДИТ ТЕКСТ В КОНСОЛЬ?",
+        "a": ["CONSOLE.READLINE()", "CONSOLE.WRITELINE()", "PRINT.TEXT()", "SYSTEM.INPUT()"],
+        "right": "CONSOLE.WRITELINE()"
+      },
+      {
+        "q": "КАК ОБЪЯВИТЬ ЦЕЛОЕ ЧИСЛО?",
+        "a": ["STRING AGE = 15;", "BOOL AGE = 15;", "INT AGE = 15;", "CHAR AGE = 15;"],
+        "right": "INT AGE = 15;"
+      },
+      {
+        "q": "КАК ОБЪЯВИТЬ СТРОКОВУЮ ПЕРЕМЕННУЮ?",
+        "a": ["STRING NAME = \"ALI\";", "INT NAME = \"ALI\";", "TEXT NAME = \"ALI\";", "WORD NAME = \"ALI\";"],
+        "right": "STRING NAME = \"ALI\";"
+      },
+      {
+        "q": "КАК СЧИТАТЬ СТРОКУ ИЗ КОНСОЛИ?",
+        "a": ["CONSOLE.WRITELINE()", "CONSOLE.PRINT()", "CONSOLE.GET()", "CONSOLE.READLINE()"],
+        "right": "CONSOLE.READLINE()"
+      }
+    ],
+    "2": [
+      {
+        "q": "КАКОЕ КЛЮЧЕВОЕ СЛОВО ПРОВЕРЯЕТ УСЛОВИЕ?",
+        "a": ["FOR", "IF", "CLASS", "USING"],
+        "right": "IF"
+      },
+      {
+        "q": "КАКОЙ ЦИКЛ ИСПОЛЬЗУЕТСЯ ДЛЯ ПОВТОРЕНИЯ ДЕЙСТВИЙ?",
+        "a": ["NAMESPACE", "RETURN", "WHILE", "USING"],
+        "right": "WHILE"
+      },
+      {
+        "q": "КАКОЙ ТИП ХРАНИТ TRUE ИЛИ FALSE?",
+        "a": ["BOOL", "INT", "STRING", "DOUBLE"],
+        "right": "BOOL"
+      },
+      {
+        "q": "КАК ПРОВЕРИТЬ РАВЕНСТВО ЗНАЧЕНИЙ?",
+        "a": ["=", "=>", "!=", "=="],
+        "right": "=="
+      },
+      {
+        "q": "КАК ОБЪЯВИТЬ МЕТОД?",
+        "a": ["METHOD START() {}", "VOID START() {}", "FUNC START() {}", "DEF START() {}"],
+        "right": "VOID START() {}"
+      }
+    ],
+    "3": [
+      {
+        "q": "КАК СОЗДАТЬ ОБЪЕКТ КЛАССА CAR?",
+        "a": ["CAR = NEW();", "NEW CAR = CAR;", "CAR CAR = NEW CAR();", "OBJECT CAR();"],
+        "right": "CAR CAR = NEW CAR();"
+      },
+      {
+        "q": "КАКОЙ ОПЕРАТОР ОЗНАЧАЕТ ЛОГИЧЕСКОЕ И?",
+        "a": "&&",
+        "a": ["&&", "||", "!", "%"],
+        "right": "&&"
+      },
+      {
+        "q": "КАК ОСТАНОВИТЬ ЦИКЛ НЕМЕДЛЕННО?",
+        "a": ["STOP", "END", "RETURNLOOP", "BREAK"],
+        "right": "BREAK"
+      },
+      {
+        "q": "КАКОЕ КЛЮЧЕВОЕ СЛОВО ОБЪЯВЛЯЕТ КЛАСС?",
+        "a": ["OBJECT", "CLASS", "STRUCTURAL", "DEFINE"],
+        "right": "CLASS"
+      },
+      {
+        "q": "КАКОЙ ОПЕРАТОР ВОЗВРАЩАЕТ ОСТАТОК ОТ ДЕЛЕНИЯ?",
+        "a": ["/", "*", "%", "+"],
+        "right": "%"
+      }
+    ]
+  }
+}

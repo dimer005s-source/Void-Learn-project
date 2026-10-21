@@ -1,112 +1,201 @@
 {% extends "base.html" %}
 
-{% block title %}ГАЛЕРЕЯ - VOID LEARN{% endblock %}
+{% block title %}ARCHIVE_NET - VOID LEARN{% endblock %}
+
+{% block bh_top %}45%{% endblock %}
+{% block bh_left %}80%{% endblock %}
 
 {% block content %}
-<div style="width: 100%; display: flex; flex-direction: column; align-items: center; padding: 100px 0 150px 0;">
+<!-- КАНВАС ЗВЕЗД -->
+<canvas id="void-stars-bg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none;"></canvas>
+
+<div class="os-viewport">
     
-    <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="color: var(--mint); letter-spacing: 7px; margin-bottom: 15px; text-shadow: var(--neon-state); text-transform: uppercase; font-size: 2.5rem; margin: 0;">Проекты Пустоты</h1>
-        <div style="font-size: 10px; opacity: 0.5; letter-spacing: 4px; margin-top: 10px;">[ SCANNING_GLOBAL_NET... ]</div>
+    <!-- SEARCH_BAR -->
+    <div id="win-search" class="profile-card draggable-window search-fixed">
+        <div class="win-header drag-handle">
+            <span class="win-title">SYS/SEARCH_ENGINE</span>
+            <div class="win-dot"></div>
+        </div>
+        <div class="win-content" style="padding: 10px;">
+            <input type="text" id="globalSearch" onkeyup="voidScanner()" placeholder="SCAN_DATABASE..." class="input-field terminal-input">
+        </div>
     </div>
 
-    <!-- УНИВЕРСАЛЬНЫЙ ПОИСК -->
-    <div style="width: 90%; max-width: 500px; margin-bottom: 50px; position: relative;">
-        <input type="text" id="globalSearch" onkeyup="voidScanner()" 
-               placeholder="ПОИСК: НАЗВАНИЕ, ТЭГ, АВТОР..." 
-               class="input-field" style="border-radius: 4px; border: 1px solid rgba(var(--mint-rgb), 0.3);">
-        <div id="scanLine" style="position: absolute; bottom: 15px; left: 0; width: 0; height: 1px; background: var(--mint); transition: 0.4s; box-shadow: var(--neon-state);"></div>
-    </div>
-
-    <!-- СЕТКА КАРТОЧЕК -->
-    <div id="portfolioGrid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; width: 95%; max-width: 1300px;">
+    <!-- PROJECTS_GRID -->
+    <div id="portfolioGrid" class="portfolio-grid-layout">
         {% if items %}
             {% for item in items %}
-            <div class="portfolio-item-card" 
+            <div class="profile-card draggable-window project-item-card collapsed" 
+                 id="node-{{ loop.index }}"
                  data-title="{{ item.title | lower }}" 
-                 data-tags="{{ item.tags | lower }}" 
-                 data-author="{{ item.author_name | lower if item.author_name else 'anonymous' }}"
-                 data-desc="{{ item.description | lower if item.description else '' }}">
+                 data-tags="{{ item.tags | lower }}">
                 
-                <div class="card-header">
-                    <h3 class="card-title">{{ item.title }}</h3>
-                    <span class="card-tag">{{ item.tags if item.tags.startswith('#') else '#' + item.tags }}</span>
+                <!-- ХЕДЕР -->
+                <div class="win-header drag-handle">
+                    <span class="win-title">NODE_{{ loop.index }}</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="tag-badge">{{ item.tags }}</span>
+                        <div class="close-btn hidden" onclick="toggleCard(this.closest('.project-item-card'), event)">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                    </div>
                 </div>
                 
-                <p class="card-desc">
-                    {{ item.description if item.description else "Системный протокол: описание отсутствует." }}
-                </p>
+                <!-- КОНТЕНТ (Виден сразу частично) -->
+                <div class="win-content content-clickable" onclick="toggleCard(this.parentElement, event)">
+                    <h3 class="proj-title">{{ item.title }}</h3>
+                    <p class="desc-short">
+                        <span style="color: var(--mint); opacity: 0.8;">> STATUS:</span> ACTIVE<br>
+                        <span style="color: var(--mint); opacity: 0.8;">> INF:</span> {{ item.description[:40] if item.description else "No data..." }}...
+                    </p>
 
-                <div class="card-footer">
-                    <div class="author-info">
-                        <i class="fas fa-user-secret" style="margin-right: 7px;"></i>
-                        {{ item.author_name }}
+                    <!-- СКРЫТАЯ ЧАСТЬ -->
+                    <div class="full-data hidden">
+                        <p class="desc-full">{{ item.description if item.description else "No depth analysis available." }}</p>
+                        <div class="card-footer">
+                            <span class="author-tag">USR: {{ item.author_name[:12] if item.author_name else "Guest" }}</span>
+                            <a href="{{ item.google_link }}" target="_blank" class="auth-btn btn-mini" onclick="event.stopPropagation()">ACCESS_DATA</a>
+                        </div>
                     </div>
-                    <a href="{{ item.google_link }}" target="_blank" class="card-link">ВЗЛОМАТЬ</a>
                 </div>
             </div>
             {% endfor %}
-        {% else %}
-            <div style="text-align: center; margin-top: 50px; opacity: 0.3;">
-                <p style="letter-spacing: 3px;">[ НИЧЕГО НЕ НАЙДЕНО ]</p>
-            </div>
         {% endif %}
     </div>
 </div>
 
 <style>
-    .portfolio-item-card {
-        width: 340px;
-        background: var(--card-bg);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(var(--mint-rgb), 0.1);
-        padding: 25px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .portfolio-item-card:hover {
-        transform: translateY(-10px);
-        border-color: var(--mint);
-        box-shadow: var(--neon-state);
-    }
-
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .card-title { margin: 0; color: var(--mint); font-size: 1.1rem; letter-spacing: 1px; }
-    .card-tag { font-size: 9px; color: var(--mint); border: 1px solid var(--mint); padding: 2px 7px; border-radius: 4px; opacity: 0.7; }
-    .card-desc { font-size: 13px; opacity: 0.6; line-height: 1.5; margin-bottom: 25px; min-height: 50px; }
-    .card-footer { border-top: 1px solid rgba(var(--mint-rgb), 0.1); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .author-info { font-size: 10px; color: var(--mint); opacity: 0.5; }
+    .os-viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; pointer-events: none; }
     
-    #globalSearch:focus + #scanLine { width: 100%; }
+    /* Опустил сетку пониже (padding-top: 250px) */
+    .portfolio-grid-layout { display: flex; flex-wrap: wrap; gap: 30px; padding: 250px 60px 100px 60px; pointer-events: none; justify-content: flex-start; }
+    
+    .draggable-window { pointer-events: all; position: relative; background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(15px); z-index: 100; }
+    
+    /* Чуть выше свернутая карточка (120px), чтобы влез текст */
+    .project-item-card { width: 280px; min-height: 120px; transition: border-color 0.3s, box-shadow 0.3s; }
+    .project-item-card.collapsed { height: 120px; overflow: hidden; }
+    .project-item-card.expanded { width: 380px !important; height: auto !important; z-index: 5000 !important; border-color: var(--mint); box-shadow: 0 0 40px rgba(var(--mint-rgb), 0.25); }
+    
+    .is-dragging { transition: none !important; z-index: 9999 !important; opacity: 0.85; cursor: grabbing !important; }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    .win-header { background: rgba(var(--mint-rgb), 0.1); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(var(--mint-rgb), 0.15); width: 100%; box-sizing: border-box; }
+    .drag-handle { cursor: grab !important; }
+    .win-title { font-size: 8px; font-weight: bold; color: var(--mint); pointer-events: none; letter-spacing: 1px; }
+    .win-dot { width: 6px; height: 6px; background: var(--mint); border-radius: 50%; box-shadow: 0 0 5px var(--mint); }
+    
+    .close-btn { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--mint); color: var(--mint); cursor: pointer; }
+    .close-btn:hover { background: var(--mint); color: #000; }
+
+    .content-clickable { padding: 15px; cursor: pointer; }
+    .proj-title { color: var(--mint); margin: 0 0 8px 0; font-size: 15px; pointer-events: none; text-transform: uppercase; letter-spacing: 1px; }
+    .desc-short { font-size: 9px; opacity: 0.7; pointer-events: none; line-height: 1.4; font-family: monospace; }
+    .desc-full { font-size: 11px; opacity: 0.9; line-height: 1.5; margin-top: 12px; border-top: 1px solid rgba(var(--mint-rgb), 0.1); padding-top: 12px; }
+    
+    .search-fixed { top: 60px; left: 50%; transform: translateX(-50%); width: 480px; position: absolute; z-index: 8000; }
+    .terminal-input { background: rgba(0,0,0,0.6) !important; color: var(--mint) !important; text-align: left !important; font-family: monospace; border: 1px solid rgba(var(--mint-rgb), 0.2) !important; }
+
+    .tag-badge { font-size: 7px; border: 1px solid var(--mint); padding: 2px 6px; border-radius: 2px; color: var(--mint); }
+    .hidden { display: none !important; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+    .btn-mini { padding: 5px 12px; font-size: 9px; }
 </style>
 
 <script>
-    function voidScanner() {
-        const input = document.getElementById('globalSearch').value.toLowerCase();
-        const items = document.getElementsByClassName('portfolio-item-card');
-        
-        for (let i = 0; i < items.length; i++) {
-            const title = items[i].getAttribute('data-title') || "";
-            const tags = items[i].getAttribute('data-tags') || "";
-            const author = items[i].getAttribute('data-author') || "";
-            const desc = items[i].getAttribute('data-desc') || "";
+let dragActive = false;
 
-            // Исправленная логика фильтра (через логическое ИЛИ)
-            if (title.includes(input) || tags.includes(input) || author.includes(input) || desc.includes(input)) {
-                items[i].style.display = "flex";
-                items[i].style.animation = "fadeIn 0.3s ease-out";
-            } else {
-                items[i].style.display = "none";
-            }
+function toggleCard(card, event) {
+    if (dragActive) return;
+    if (event.target.closest('.close-btn')) {
+        event.stopPropagation();
+        card.classList.add('collapsed');
+        card.classList.remove('expanded');
+        card.querySelector('.full-data').classList.add('hidden');
+        card.querySelector('.close-btn').classList.add('hidden');
+        return;
+    }
+    if (card.classList.contains('expanded')) return;
+
+    document.querySelectorAll('.project-item-card').forEach(c => {
+        c.classList.add('collapsed');
+        c.classList.remove('expanded');
+        c.querySelector('.full-data').classList.add('hidden');
+        c.querySelector('.close-btn').classList.add('hidden');
+    });
+
+    card.classList.remove('collapsed');
+    card.classList.add('expanded');
+    card.querySelector('.full-data').classList.remove('hidden');
+    card.querySelector('.close-btn').classList.remove('hidden');
+}
+
+document.addEventListener('mousedown', function(e) {
+    const handle = e.target.closest('.drag-handle');
+    if (!handle) return;
+    
+    const card = handle.closest('.draggable-window');
+    dragActive = false;
+    const rect = card.getBoundingClientRect();
+    const shiftX = e.clientX - rect.left;
+    const shiftY = e.clientY - rect.top;
+    
+    function moveAt(ev) {
+        if (Math.abs(ev.clientX - e.clientX) > 5 || Math.abs(ev.clientY - e.clientY) > 5) {
+            dragActive = true;
+            card.classList.add('is-dragging');
+            card.style.position = 'fixed';
+            card.style.margin = '0';
+            card.style.left = ev.clientX - shiftX + 'px';
+            card.style.top = ev.clientY - shiftY + 'px';
         }
     }
+
+    function stopDrag() {
+        document.removeEventListener('mousemove', moveAt);
+        document.removeEventListener('mouseup', stopDrag);
+        card.classList.remove('is-dragging');
+        setTimeout(() => { dragActive = false; }, 100);
+    }
+    document.addEventListener('mousemove', moveAt);
+    document.addEventListener('mouseup', stopDrag);
+});
+
+document.ondragstart = () => false;
+
+function voidScanner() {
+    const query = document.getElementById('globalSearch').value.toLowerCase();
+    document.querySelectorAll('.project-item-card').forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(query) ? 'block' : 'none';
+    });
+}
+
+// STARS LOGIC
+const cvs = document.getElementById('void-stars-bg');
+const c = cvs.getContext('2d');
+let stars = [];
+function initSpace() {
+    cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+    stars = [];
+    for(let i=0; i<180; i++) {
+        stars.push({
+            x: Math.random()*cvs.width, y: Math.random()*cvs.height,
+            r: Math.random()*1.5, o: Math.random(), s: 0.005 + Math.random()*0.015,
+            color: Math.random() > 0.7 ? '#bf94ff' : '#ffffff'
+        });
+    }
+}
+function spawnSpace() {
+    c.clearRect(0, 0, cvs.width, cvs.height);
+    stars.forEach(s => {
+        s.o += s.s; if(s.o > 1 || s.o < 0) s.s = -s.s;
+        c.beginPath(); c.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        c.fillStyle = s.color === '#ffffff' ? `rgba(255,255,255,${s.o})` : `rgba(191,148,255,${s.o})`;
+        c.fill();
+    });
+    requestAnimationFrame(spawnSpace);
+}
+window.onresize = initSpace;
+initSpace(); spawnSpace();
 </script>
 {% endblock %}

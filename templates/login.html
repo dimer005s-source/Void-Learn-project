@@ -1,35 +1,142 @@
 {% extends "base.html" %}
 
-{% block title %}ВХОД - VOID LEARN{% endblock %}
+<!-- Смещение дыры остается по канону -->
+{% block bh_left %}750{% endblock %}
+{% block bh_top %}500{% endblock %}
+
+{% block title %}SYS/LOGIN - VOID LEARN{% endblock %}
 
 {% block content %}
-<div class="profile-card">
-    <h2 style="color: var(--mint); margin-bottom: 25px;">ВХОД В СИСТЕМУ</h2>
-    
-       <!-- Блок сочных ошибок -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div style="margin-bottom: 15px;">
-          {% for category, message in messages %}
-            <div style="color: #ff4444; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; border: 1px solid #ff4444; padding: 5px; border-radius: 8px; background: rgba(255, 68, 68, 0.1);">
-                {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    <form action="/login" method="POST" style="display: flex; flex-direction: column; gap: 5px;">
-        <input type="email" name="email" placeholder="EMAIL" class="input-field" required>
-        <input type="password" name="password" placeholder="ПАРОЛЬ" class="input-field" required>
+<div class="os-viewport">
+    <!-- СМЕЩЕНИЕ: было 15%, теперь 15% - 40px -->
+    <div id="win-login" class="draggable-window login-terminal" style="top: 20%; left: calc(15% - 40px); width: 420px; position: absolute;">
         
-        <button type="submit" class="auth-btn" style="margin-top: 15px;">ВОЙТИ ЧЕРЕЗ ПУСТОТУ</button>
-    </form>
-    
-    <div style="margin-top: 20px;">
-        <a href="/register" style="color: var(--mint); text-decoration: none; font-size: 11px; text-transform: uppercase; font-weight: bold;">
-            НЕТ АККАУНТА? ЗАРЕГИСТРИРОВАТЬСЯ
-        </a>
+        <div class="win-header drag-handle">
+            <span class="win-title black-acute-text white-text">SECURITY_CORE // AUTH</span>
+            <div class="win-controls">
+                <div class="win-dot blink-mint"></div>
+            </div>
+        </div>
+        
+        <div class="win-content terminal-dark-bg">
+            <h1 class="login-title black-acute-text glow-white">ВХОД В СИСТЕМУ</h1>
+
+            <div class="status-row">
+                <span class="guest-badge-inline black-acute-text">STN: ACTIVE</span>
+                <span class="guest-badge-inline black-acute-text" style="color: #ffffff; border-color: #ffffff;">MODE: GUEST</span>
+            </div>
+
+            <form action="/login" method="POST" class="terminal-form">
+                <div class="t-input-group">
+                    <span class="t-prompt">> USER_ID:</span>
+                    <input type="email" name="email" class="terminal-input-field white-text" required placeholder="example@void.com" spellcheck="false">
+                </div>
+                
+                <div class="t-input-group">
+                    <span class="t-prompt">> ACCESS_KEY:</span>
+                    <div style="display: flex; align-items: center; width: 100%;">
+                        <input type="password" id="pass-input" name="password" class="terminal-input-field white-text" required placeholder="••••••••">
+                        <!-- Тот самый ГЛАЗ -->
+                        <i class="fas fa-eye" id="toggle-eye" style="color: var(--mint); cursor: pointer; font-size: 12px; margin-left: 10px; opacity: 0.7;"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="auth-btn terminal-submit black-acute-text">
+                    [ INITIATE_SESSION ]
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <a href="/register" class="reg-link black-acute-text">> REGISTER_NEW_ENTITY</a>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .os-viewport { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1000; }
+    
+    .login-terminal {
+        pointer-events: all;
+        background: rgba(5, 2, 10, 0.95);
+        border: 1px solid var(--border-color); /* Вернули твою фиолетовую обводку */
+        box-shadow: 0 0 20px rgba(var(--mint-rgb), 0.3);
+        display: flex; flex-direction: column;
+        border-radius: 8px; overflow: hidden;
+    }
+
+    .win-header { 
+        background: rgba(var(--mint-rgb), 0.2); 
+        padding: 10px 15px; display: flex; justify-content: space-between; 
+        align-items: center; cursor: grab; border-bottom: 1px solid var(--border-color);
+    }
+
+    .white-text { color: #ffffff !important; }
+    .glow-white { color: #ffffff !important; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); font-size: 22px; margin-bottom: 10px; }
+
+    .win-content { padding: 30px; }
+    .t-prompt { font-family: monospace; font-size: 11px; color: var(--mint); font-weight: bold; min-width: 90px; }
+    
+    .terminal-input-field {
+        background: transparent; border: none; outline: none;
+        color: #ffffff; font-family: monospace; font-size: 14px; width: 100%;
+    }
+
+    .t-input-group { 
+        display: flex; align-items: center; border-bottom: 1px solid rgba(var(--mint-rgb), 0.3); 
+        padding-bottom: 8px; margin-bottom: 15px;
+    }
+
+    .status-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    .guest-badge-inline { font-size: 8px; color: var(--mint); border: 1px solid var(--mint); padding: 3px 10px; }
+
+    .terminal-submit {
+        margin-top: 20px; background: transparent; 
+        border: 1px solid #ffffff; color: #ffffff;
+        padding: 14px; cursor: pointer; transition: 0.2s;
+        font-size: 11px; width: 100%;
+    }
+    .terminal-submit:hover { background: #ffffff; color: #000; box-shadow: 0 0 20px #ffffff; }
+
+    .blink-mint { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: blink 1.5s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .reg-link { color: #ffffff; text-decoration: none; font-size: 9px; opacity: 0.6; }
+</style>
+
+<script>
+// ЛОГИКА ГЛАЗА
+const toggleEye = document.getElementById('toggle-eye');
+const passInput = document.getElementById('pass-input');
+
+toggleEye.addEventListener('click', () => {
+    const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passInput.setAttribute('type', type);
+    toggleEye.classList.toggle('fa-eye');
+    toggleEye.classList.toggle('fa-eye-slash');
+});
+
+// DRAG AND DROP
+(function() {
+    const win = document.getElementById('win-login');
+    const header = win.querySelector('.drag-handle');
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - win.offsetLeft;
+        offsetY = e.clientY - win.offsetTop;
+        win.style.zIndex = "10000";
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        win.style.left = (e.clientX - offsetX) + 'px';
+        win.style.top = (e.clientY - offsetY) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => { isDragging = false; });
+})();
+</script>
 {% endblock %}
