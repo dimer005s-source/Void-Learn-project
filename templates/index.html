@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}VOID LEARN - ГЛАВНАЯ{% endblock %}
+
 {% block content %}
 <div class="main-screen-content">
     <div id="main-info-block">
@@ -8,27 +10,87 @@
         <a href="/lessons" class="auth-btn">НАЧАТЬ ПУТЬ</a>
     </div>
 
-    <div id="void-text">УЧИТЬСЯ</div>
+    <!-- Шестиугольная кнопка для темы Voided -->
+    <a href="/lessons" id="void-learn-button" class="black-acute-text">
+        <div class="void-btn-inner">УЧИТЬСЯ</div>
+    </a>
 </div>
 
 <style>
     .main-screen-content {
-        height: 100vh; display: flex; align-items: center; justify-content: center;
-        flex-direction: column; text-align: center;
+        min-height: 100vh;
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        flex-direction: column; 
+        text-align: center;
     }
+
     #main-info-block {
         transition: all 0.8s ease;
-        padding: 40px; background: var(--card-bg); border-radius: 20px;
+        padding: 40px; 
+        background: var(--card-bg); 
+        border-radius: 20px;
         border: 1px solid var(--border-color);
     }
+
     [data-theme="voided"] #main-info-block {
-        opacity: 0; transform: scale(0.8); pointer-events: none;
+        opacity: 0; 
+        transform: scale(0.8); 
+        pointer-events: none;
     }
-    #void-text {
-        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        font-size: 60px; font-weight: 900; color: white; opacity: 0;
-        letter-spacing: 15px; transition: 1.5s; pointer-events: none;
+
+    /* ВНЕШНЯЯ КНОПКА (Задаёт неоновую рамку через ТВОЙ clip-path) */
+    #void-learn-button {
+        position: fixed;
+        bottom: 110px;
+        left: 50%;
+        transform: translateX(-50%) scale(0.9);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+
+        /* ТВОЙ ПОЛИГОН */
+        clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+        
+        /* Фон контейнера = цвет неоновой рамки */
+        background: var(--mint);
+        padding: 2px; /* Толщина рамки */
+        box-shadow: 0 0 25px rgba(var(--mint-rgb), 0.5);
     }
-    [data-theme="voided"] #void-text { opacity: 0.8; }
+
+    /* ВНУТРЕННИЙ БЛОК (Затемненное тело кнопки) */
+    .void-btn-inner {
+        clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
+        background: rgba(10, 3, 18, 0.9); /* Тёмно-фиолетовый фон в стиль voided */
+        color: #ffffff;
+        padding: 16px 55px;
+        font-size: 1.8rem;
+        letter-spacing: 10px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ЭФФЕКТЫ ПРИ НАВЕДЕНИИ (HOVER) */
+    #void-learn-button:hover {
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 0 0 40px var(--mint);
+    }
+
+    #void-learn-button:hover .void-btn-inner {
+        background: var(--mint);
+        color: #000000;
+        font-weight: bold;
+        text-shadow: none;
+    }
+
+    /* ПОКАЗЫВАЕМ ТОЛЬКО В VOIDED ТЕМЕ */
+    [data-theme="voided"] #void-learn-button { 
+        opacity: 1;
+        pointer-events: auto;
+    }
 </style>
 {% endblock %}
