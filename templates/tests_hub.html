@@ -1,21 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="badge-top"></div>
+<div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div class="badge-top" style="margin-bottom: 25px;">ТЕСТ-ХАБ</div>
 
-<div class="tests-grid">
-    {% set languages = [
-        {'id': 'python', 'name': 'PYTHON'},
-        {'id': 'cpp',    'name': 'C++'},
-        {'id': 'java',   'name': 'JAVA'},
-        {'id': 'web',    'name': 'WEB'}
-    ] %}
-
-    {% for lang in languages %}
-    <a href="/test/{{ lang.id }}" class="profile-card">
-        <h3>#{{ lang.name }}</h3>
-        <p>ПРОВЕРИТЬ ЗНАНИЯ</p>
-    </a>
-    {% endfor %}
+    <div class="tests-grid" style="margin: 0 auto;">
+        {% for lang, name in [('python', 'PYTHON'), ('cpp', 'C++'), ('csharp', 'C#'), ('java', 'JAVA')] %}
+        <a href="{{ url_for('test_page', lang=lang) }}" class="profile-card">
+            <h3>#{{ name }}</h3>
+            <p>ПРОВЕРИТЬ ЗНАНИЯ</p>
+        </a>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

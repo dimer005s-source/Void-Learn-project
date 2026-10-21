@@ -1,18 +1,15 @@
 {% extends "base.html" %}
 
-<!-- Смещаем дыру ЖЕСТКО ВЛЕВО (300px от левого края холста) -->
-{% block bh_left %}300{% endblock %} 
+<!-- Переопределение положения черной дыры. Используем ТОЛЬКО ОДИН РАЗ каждый блок! -->
+{% block bh_left %}650{% endblock %} {# Изменил на значение со второго блока #}
 {% block bh_top %}500{% endblock %}
 
 {% block title %}SYS/REGISTRATION - VOID LEARN{% endblock %}
 
-{% block bh_left %}650{% endblock %}
-{% block bh_top %}500{% endblock %}
-
 {% block content %}
 <div class="os-viewport">
     <!-- Окно регистрации: right: 5%, чтобы было с краю справа -->
-    <div id="win-register" class="draggable-window login-terminal" style="top: 15%; right: 5%; width: 440px; position: absolute;">
+    <div id="win-register" class="draggable-window login-terminal" style="top: 15%; right: 5%;"> {# Убрал width: 440px; position: absolute; - вынесем в CSS #}
         
         <div class="win-header drag-handle">
             <span class="win-title black-acute-text white-text">SECURITY_CORE // REG_PROTOCOL</span>
@@ -66,84 +63,172 @@
 </div>
 
 <style>
-    .os-viewport { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1000; }
+    /* Перенес инлайновые стили сюда для чистоты */
+    .os-viewport { 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100vw; 
+        height: 100vh; 
+        pointer-events: none; 
+        z-index: 1000;}
     
     .login-terminal {
         pointer-events: all;
         background: rgba(5, 2, 10, 0.96);
         border: 1px solid var(--border-color);
         box-shadow: 0 0 30px rgba(var(--mint-rgb), 0.2);
-        display: flex; flex-direction: column;
-        border-radius: 8px; overflow: hidden;
+        display: flex; 
+        flex-direction: column;
+        border-radius: 8px; 
+        overflow: hidden;
+        /* Перенес эти стили сюда */
+        width: 440px; 
+        position: absolute;
     }
 
     .win-header { 
         background: rgba(var(--mint-rgb), 0.2); 
-        padding: 10px 15px; display: flex; justify-content: space-between;align-items: center; cursor: grab; border-bottom: 1px solid var(--border-color);
+        padding: 10px 15px; 
+        display: flex; 
+        justify-content: space-between;
+        align-items: center; 
+        cursor: grab; 
+        border-bottom: 1px solid var(--border-color);
     }
 
-    .white-text { color: #ffffff !important; }
-    .glow-white { color: #ffffff !important; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); font-size: 20px; margin-bottom: 10px; }
+    .white-text { 
+        color: #ffffff !important; 
+    }
+    .glow-white { 
+        color: #ffffff !important; 
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); 
+        font-size: 20px; 
+        margin-bottom: 10px; 
+    }
 
-    .win-content { padding: 30px; }
-    .t-prompt { font-family: monospace; font-size: 10px; color: var(--mint); font-weight: bold; min-width: 100px; }
+    .win-content { 
+        padding: 30px; 
+    }
+    .t-prompt { 
+        font-family: monospace; 
+        font-size: 10px; 
+        color: var(--mint); 
+        font-weight: bold; 
+        min-width: 100px; 
+    }
     
     .terminal-input-field {
-        background: transparent; border: none; outline: none;
-        color: #ffffff; font-family: monospace; font-size: 13px; width: 100%;
+        background: transparent; 
+        border: none; 
+        outline: none;
+        color: #ffffff; 
+        font-family: monospace; 
+        font-size: 13px; 
+        width: 100%;
     }
 
     .t-input-group { 
-        display: flex; align-items: center; border-bottom: 1px solid rgba(var(--mint-rgb), 0.3); 
-        padding-bottom: 6px; margin-bottom: 15px;
+        display: flex; 
+        align-items: center; 
+        border-bottom: 1px solid rgba(var(--mint-rgb), 0.3); 
+        padding-bottom: 6px; 
+        margin-bottom: 15px;
     }
 
-    .status-row { display: flex; gap: 10px; margin-bottom: 25px; }
-    .guest-badge-inline { font-size: 8px; color: var(--mint); border: 1px solid var(--mint); padding: 3px 10px; }
+    .status-row { 
+        display: flex; 
+        gap: 10px; 
+        margin-bottom: 25px; 
+    }
+    .guest-badge-inline { 
+        font-size: 8px; 
+        color: var(--mint); 
+        border: 1px solid var(--mint); 
+        padding: 3px 10px; 
+    }
 
     .terminal-submit {
-        margin-top: 15px; background: transparent; 
-        border: 1px solid #ffffff; color: #ffffff;
-        padding: 14px; cursor: pointer; transition: 0.2s;
-        font-size: 11px; width: 100%;
+        margin-top: 15px; 
+        background: transparent; 
+        border: 1px solid #ffffff; 
+        color: #ffffff;
+        padding: 14px; 
+        cursor: pointer; 
+        transition: 0.2s;
+        font-size: 11px; 
+        width: 100%;
     }
-    .terminal-submit:hover { background: #ffffff; color: #000; box-shadow: 0 0 20px #ffffff; }
+    .terminal-submit:hover { 
+        background: #ffffff; 
+        color: #000; 
+        box-shadow: 0 0 20px #ffffff; 
+    }
 
-    .blink-mint { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: blink 1.5s infinite; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .blink-mint { 
+        width: 8px; 
+        height: 8px; 
+        background: var(--mint); 
+        border-radius: 50%; 
+        animation: blink 1.5s infinite; 
+    }
+    @keyframes blink { 
+        0%, 100% { opacity: 1; } 
+        50% { opacity: 0.3; } 
+    }
 
-    .login-footer { margin-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px; }
-    .reg-link { color: #ffffff; text-decoration: none; font-size: 9px; opacity: 0.6; }
+    .login-footer { 
+        margin-top: 15px; 
+        border-top: 1px solid rgba(255, 255, 255, 0.1); 
+        padding-top: 12px; 
+    }
+    .reg-link { 
+        color: #ffffff; 
+        text-decoration: none; 
+        font-size: 9px; 
+        opacity: 0.6; 
+    }
 </style>
 
 <script>
 // Глаз и Драг-н-дроп
 const toggleEye = document.getElementById('toggle-eye');
 const passInput = document.getElementById('pass-input');
-toggleEye.addEventListener('click', () => {
-    const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passInput.setAttribute('type', type);
-    toggleEye.classList.toggle('fa-eye');
-    toggleEye.classList.toggle('fa-eye-slash');
-});
+if(toggleEye && passInput) { // Добавил проверку, чтобы скрипт не падал, если элементов нет
+    toggleEye.addEventListener('click', () => {
+        const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passInput.setAttribute('type', type);
+        toggleEye.classList.toggle('fa-eye');
+        toggleEye.classList.toggle('fa-eye-slash');
+    });
+}
 
 (function() {
     const win = document.getElementById('win-register');
+    if(!win) return; // Добавил проверку, чтобы скрипт не падал, если окна нет
+
     const header = win.querySelector('.drag-handle');
     let isDragging = false;
     let offsetX, offsetY;
+
     header.addEventListener('mousedown', (e) => {
         isDragging = true;
         offsetX = e.clientX - win.offsetLeft;
         offsetY = e.clientY - win.offsetTop;
+        // Запоминаем текущую позицию, чтобы избежать дерганья
+        win.style.position = 'absolute';
+        win.style.right = 'auto'; 
     });
+
     document.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
         win.style.left = (e.clientX - offsetX) + 'px';
         win.style.top = (e.clientY - offsetY) + 'px';
-        win.style.right = 'auto'; // Сбрасываем right при перетаскивании
     });
-    document.addEventListener('mouseup', () => { isDragging = false; });
+
+    document.addEventListener('mouseup', () => { 
+        isDragging = false; 
+    });
 })();
 </script>
 {% endblock %}

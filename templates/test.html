@@ -1,124 +1,199 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="badge-top">ТЕСТИРОВАНИЕ: {{ lang_name }}</div>
-
-<div class="profile-card" style="width: 100%; max-width: 520px; margin: 0 auto;">
-    <div id="quiz-container">
-        <!-- Индикатор прогресса -->
-        <div id="quiz-progress" style="font-size: 11px; color: var(--widget-label); letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase;">
-            Вопрос <span id="current-q-num">1</span> из <span id="total-q-num">0</span>
-        </div>
-
-        <!-- Текст вопроса -->
-        <h3 id="question-text" style="margin-top: 0; margin-bottom: 24px; line-height: 1.4; color: var(--text-main);">
-            Загрузка вопроса...
-        </h3>
-
-        <!-- Контейнер для кнопок с ответами -->
-        <div id="answers-list" style="display: flex; flex-direction: column; gap: 12px;">
-            <!-- Кнопки генерируются скриптом -->
-        </div>
+<div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    
+    <!-- Заголовок вынесен ВЫШЕ карточки, поднят и оформлен вашим шрифтом -->
+    <div class="badge-top black-acute-text" style="margin-bottom: 25px; letter-spacing: 3px;">
+        ТЕСТИРОВАНИЕ: {{ lang_name }}
     </div>
 
-    <!-- Блок результатов (изначально скрыт) -->
-    <div id="result-container" style="display: none; text-align: center; padding: 10px 0;">
-        <h2 style="color: var(--mint); margin-bottom: 10px;">ТЕСТ ЗАВЕРШЁН</h2>
-        <p id="score-text" style="font-size: 16px; margin-bottom: 25px; color: var(--text-main);"></p>
+    <div class="profile-card" style="width: 100%; max-width: 500px; margin: 0 auto;" data-lang="{{ lang_code }}">
         
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <button class="auth-btn" onclick="restartQuiz()">Пройти заново</button>
-            <a href="/tests_hub" class="auth-btn">В тест-хаб</a>
+        <!-- 1. ВЫБОР УРОВНЯ -->
+        <div id="level-selector">
+            <h3 style="margin-bottom: 20px; color: var(--mint);">ВЫБЕРИ УРОВЕНЬ:</h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="auth-btn btn-level" data-level="1">УРОВЕНЬ 1 (EASY)</button>
+                <button class="auth-btn btn-level" data-level="2">УРОВЕНЬ 2 (MEDIUM)</button>
+                <button class="auth-btn btn-level" data-level="3">УРОВЕНЬ 3 (HARD)</button>
+            </div>
+            
+            <!-- Пофиксил синий цвет: перекрасил под --mint, убрал подчеркивание -->
+            <a href="{{ url_for('tests_hub') }}" style="display: inline-block; margin-top: 20px; color: var(--mint); text-decoration: none; font-size: 11px; letter-spacing: 1px; opacity: 0.8; transition: 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+                ← НАЗАД В ХАБ
+            </a>
         </div>
+
+        <!-- 2. ОКНО ТЕСТА -->
+        <div id="quiz-container" style="display: none;">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--widget-label); margin-bottom: 15px;">
+                <span id="question-number">ВОПРОС 1/15</span>
+                <span id="score-counter">ОЧКИ: 0</span>
+            </div>
+
+            <h3 id="question-text" style="margin-bottom: 20px; color: var(--text-main); font-size: 1.1rem; text-align: left;">
+                Загрузка вопроса...
+            </h3>
+
+            <div id="answers-list" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Сюда JS накидает кнопок -->
+            </div>
+
+            <button id="next-btn" class="auth-btn" style="margin-top: 20px; width: 100%; display: none;">
+                СЛЕДУЮЩИЙ ВОПРОС →
+            </button>
+        </div>
+
+        <!-- 3. ОКНО РЕЗУЛЬТАТА -->
+        <div id="result-box" style="display: none;">
+            <h3 style="color: var(--mint); margin-bottom: 15px;">ТЕСТ ЗАВЕРШЕН!</h3>
+            <p id="result-text" style="font-size: 14px; color: var(--text-main); margin-bottom: 10px;">Результат: 0 / 15</p>
+            <p id="score-earned-text" style="font-size: 12px; color: #4caf50; font-weight: bold; margin-bottom: 20px;">+0 XP зачислено в профиль!</p>
+            <a href="{{ url_for('tests_hub') }}" class="auth-btn" style="width: 100%;">ВЕРНУТЬСЯ В ХАБ</a>
+        </div>
+
     </div>
 </div>
 
 <script>
-    // Пример базы вопросов (в реальном проекте можно подгружать через fetch/API)
-    const questions = [
-        {
-            question: "Какая функция используется для вывода данных в консоль?",
-            options: ["print() / console.log()", "input() / scanf()", "read()", "writeLineOnly()"],
-            correct: 0
-        },
-        {
-            question: "Какой тип данных используется для хранения логических значений (true / false)?",
-            options: ["String", "Integer", "Boolean", "Float"],
-            correct: 2
-        },
-        {
-            question: "Что произойдет при делении целого числа на ноль в большинстве языков?",
-            options: ["Вернется 0", "Вернется Infinity", "Возникнет ошибка / Exception", "Программа пропустит строку"],
-            correct: 2
-        }
-    ];
+document.addEventListener('DOMContentLoaded', () => {
+    const card = document.querySelector('.profile-card');
+    const lang = card.dataset.lang;
+    
+    const levelSelector = document.getElementById('level-selector');
+    const quizContainer = document.getElementById('quiz-container');
+    const resultBox = document.getElementById('result-box');
+    
+    const questionText = document.getElementById('question-text');
+    const answersList = document.getElementById('answers-list');
+    const questionNumber = document.getElementById('question-number');
+    const scoreCounter = document.getElementById('score-counter');
+    const nextBtn = document.getElementById('next-btn');
 
-    let currentQuestionIndex = 0;
+    let currentQuestions = [];
+    let currentIndex = 0;
     let score = 0;
+    let answerSelected = false;// Выбор уровня
+    document.querySelectorAll('.btn-level').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const level = btn.dataset.level;
+            loadQuestions(level);
+        });
+    });
 
-    const quizContainer = document.getElementById("quiz-container");
-    const resultContainer = document.getElementById("result-container");
-    const questionText = document.getElementById("question-text");
-    const answersList = document.getElementById("answers-list");
-    const currentQNum = document.getElementById("current-q-num");
-    const totalQNum = document.getElementById("total-q-num");
-    const scoreText = document.getElementById("score-text");
+    function loadQuestions(level) {
+        fetch(`/api/questions/${lang}/${level}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data || data.length === 0) {
+                    alert('Вопросы для этого уровня ещё не завезли!');
+                    return;
+                }
+                currentQuestions = data;
+                currentIndex = 0;
+                score = 0;
 
-    function initQuiz() {
-        totalQNum.textContent = questions.length;
-        loadQuestion();
+                levelSelector.style.display = 'none';
+                quizContainer.style.display = 'block';
+                
+                renderQuestion();
+            })
+            .catch(err => console.error('Ошибка загрузки:', err));
     }
 
-    function loadQuestion() {
-        const q = questions[currentQuestionIndex];
-        currentQNum.textContent = currentQuestionIndex + 1;
-        questionText.textContent = q.question;
-        answersList.innerHTML = "";
+      // Функция перемешивания массива (Fisher-Yates Shuffle)
+    function shuffleArray(array) {
+        let shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
 
-        q.options.forEach((optionText, index) => {
-            const btn = document.createElement("button");
-            // Класс .auth-btn из stylr.txt обеспечивает неоновый стиль и анимацию
-            btn.className = "auth-btn";
-            btn.style.width = "100%";
-            btn.style.textAlign = "left";
-            btn.style.justifyContent = "flex-start";
-            btn.style.padding = "14px 18px";
-            btn.style.fontSize = "12px";
-            btn.textContent = `${index + 1}. ${optionText}`;
-            
-            btn.onclick = () => handleAnswer(index);
+    function renderQuestion() {
+        answerSelected = false;
+        nextBtn.style.display = 'none';
+        answersList.innerHTML = '';
+
+        const q = currentQuestions[currentIndex];
+        questionNumber.textContent = `ВОПРОС ${currentIndex + 1}/${currentQuestions.length}`;
+        scoreCounter.textContent = `ОЧКИ: ${score}`;
+        questionText.textContent = q.q;
+
+        // Рандомизируем порядок ответов перед выводом
+        const randomizedAnswers = shuffleArray(q.a);
+
+        randomizedAnswers.forEach(answer => {
+            const btn = document.createElement('button');
+            btn.className = 'auth-btn';
+            btn.style.width = '100%';
+            btn.style.justifyContent = 'flex-start';
+            btn.style.textAlign = 'left';
+            btn.textContent = answer;
+
+            btn.addEventListener('click', () => handleAnswer(btn, answer, q.right));
             answersList.appendChild(btn);
         });
     }
 
-    function handleAnswer(selectedIndex) {
-        if (selectedIndex === questions[currentQuestionIndex].correct) {
+
+    function handleAnswer(selectedBtn, chosen, right) {
+        if (answerSelected) return;
+        answerSelected = true;
+
+        const allBtns = answersList.querySelectorAll('.auth-btn');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+        if (chosen === right) {
+            selectedBtn.style.background = '#28a745';
+            selectedBtn.style.color = '#fff';
+            selectedBtn.style.borderColor = '#28a745';
             score++;
-        }
-
-        currentQuestionIndex++;
-        if (currentQuestionIndex < questions.length) {
-            loadQuestion();
+            scoreCounter.textContent = `ОЧКИ: ${score}`;
         } else {
-            showResults();
+            selectedBtn.style.background = '#dc3545';
+            selectedBtn.style.color = '#fff';
+            selectedBtn.style.borderColor = '#dc3545';
+
+            allBtns.forEach(b => {
+                if (b.textContent === right) {
+                    b.style.background = '#28a745';
+                    b.style.color = '#fff';
+                    b.style.borderColor = '#28a745';
+                }
+            });
         }
+
+        nextBtn.style.display = 'inline-flex';
     }
 
-    function showResults() {
-        quizContainer.style.display = "none";
-        resultContainer.style.display = "block";
-        scoreText.innerHTML = `Правильных ответов: <b style="color: var(--mint);">${score}</b> из <b>${questions.length}</b>`;
-    }
+    nextBtn.addEventListener('click', () => {
+        currentIndex++;
+        if (currentIndex < currentQuestions.length) {
+            renderQuestion();
+        } else {
+            finishQuiz();
+        }
+    });
 
-    function restartQuiz() {
-        score = 0;
-        currentQuestionIndex = 0;
-        resultContainer.style.display = "none";
-        quizContainer.style.display = "block";
-        loadQuestion();
-    }
+    function finishQuiz() {
+        quizContainer.style.display = 'none';
+        resultBox.style.display = 'block';
 
-    // Старт тестирования при загрузке
-    document.addEventListener("DOMContentLoaded", initQuiz);
+        document.getElementById('result-text').textContent = `Результат: ${score} из ${currentQuestions.length}`;
+        document.getElementById('score-earned-text').textContent = `+${score} XP зачислено в профиль!`;
+
+        fetch('/api/save_score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lang: lang, score: score })
+        })
+        .then(res => res.json())
+        .then(data => console.log('Успешно сохранено:', data))
+        .catch(err => console.error('Ошибка сохранения:', err));
+    }
+});
 </script>
 {% endblock %}
