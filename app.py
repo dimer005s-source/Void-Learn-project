@@ -150,14 +150,25 @@ def test_page(lang):
                            lang_code=lang.lower())
 
 @app.route('/api/questions/<lang>/<level>')
-def get_questions(lang, level):
-    # Принудительно всегда отдаем уровень 1, раз мы объединили всё в один тест
-    with open('questions.json', 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    lang_data = data.get(lang, {})
-    questions = lang_data.get("1", []) # Всегда берем первый массив
-    return jsonify(questions)
+@app.route('/api/questions/<lang>')  # Добавили роут без уровня для страховки
+def get_questions(lang, level="1"):
+    try:
+        # Указываем абсолютный путь к файлу относительно app.py (чтобы PythonAnywhere не путался)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        json_path = os.path.join(base_dir, 'questions.json')
+        
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        lang_data = data.get(lang, {})
+        # Всегда берем "1" ключ, раз объединили вопросы
+        questions = lang_data.get("1", [])
+        
+        return jsonify(questions)
+    except Exception as e:
+        print(f"Ошибка загрузки JSON: {e}")
+        return jsonify([]), 500
+
 
 @app.route('/api/save_score', methods=['POST'])
 @login_required
