@@ -38,6 +38,10 @@ class User(UserMixin, db.Model):
     score_html = db.Column(db.Integer, default=0)
     score_css = db.Column(db.Integer, default=0)
 
+    total_questions_attempted = db.Column(db.Integer, default=0) # Всего вопросов, на которые отвечал
+    total_correct_answers = db.Column(db.Integer, default=0)     # Всего правильных ответов
+    most_frequent_test = db.Column(db.String(50), default="НЕТ ДАННЫХ") # Самый частый тест
+    
     portfolio_items = db.relationship('Portfolio', backref='author', lazy=True)
 
 class Portfolio(db.Model):
@@ -214,12 +218,16 @@ def get_questions(lang, level="1"):
 @login_required
 def save_score():
     data = request.json or {}
-    score = int(data.get('score', 0))
+    score = int(data.get('score', 0)) # Количество правильных ответов в текущем тесте
+    total_questions_in_test = int(data.get('total_questions', 0)) # Общее количество вопросов в текущем тесте
     lang_code = data.get('lang', '').lower()
     
     user = current_user
+    
+    # Обновляем общий exp
     user.exp = (user.exp or 0) + score
     
+    # Обновляем специфические очки по языкам
     if lang_code == 'python':
         user.score_py = (user.score_py or 0) + score
     elif lang_code == 'cpp':
@@ -233,6 +241,22 @@ def save_score():
     elif lang_code == 'css':
         user.score_css = (user.score_css or 0) + score
     
+    # ОБНОВЛЕНИЕ ДЛЯ СТАТИСТИКИ СЕРТИФИКАТА
+    user.total_correct_answers = (user.total_correct_answers or 0) + score
+    user.total_questions_attempted = (user.total_questions_attempted or 0) + total_questions_in_test
+
+    # Определяем самый частый тест (немного упрощенно, можно улучшить)
+    # Здесь просто смотрим, где больше всего очков.
+    lang_scores = {
+        'Python': user.score_py, 'C++': user.score_cpp, 'C#': user.score_cs,
+        'Java': user.score_java, 'HTML': user.score_html, 'CSS': user.score_css
+    }
+    
+    if any(s > 0 for s in lang_scores.values()): # Если хоть какие-то очки есть
+        user.most_frequent_test = max(lang_scores, key=lang_scores.get)
+    else:
+        user.most_frequent_test = "НЕТ ДАННЫХ"
+
     db.session.add(user)
     db.session.commit()
 
@@ -264,26 +288,76 @@ def generate_certificate():
 
     img_w, img_h = img.size
 
+    # Загружаем шрифт (разные размеры для разных строк)
     try:
-        font_fio = ImageFont.truetype(font_path, 60)
-        font_date = ImageFont.truetype(font_path, 30)
+        font_fio = ImageFont.truetype(font_path, 60) # Для ФИО
+        font_main_text = ImageFont.truetype(font_path, 35) # Для основного текста
+        font_small_text = ImageFont.truetype(font_path, 25) # Для мелкого текста
+        font_date = ImageFont.truetype(font_path, 30) # Для даты
     except Exception:
+        # Если шрифт не найден, используем дефолтный
         font_fio = ImageFont.load_default()
+        font_main_text = ImageFont.load_default()
+        font_small_text = ImageFont.load_default()
         font_date = ImageFont.load_default()
+
+    # --- ТЕКСТОВЫЕ СТРОКИ ДЛЯ СЕРТИФИКАТА ---
+    # Можно использовать данные из current_user, если они там есть.
+    # Пример: user_grade = current_user.school_class
+    # В данный момент используем статичные или вычисляемые значения.
+    
+    line1_text = fio.upper() # ФИО пользователя
+    line2_text = "НАСТОЯЩИЙ МАСТЕР КОДА"
+    line3_text = f"УСПЕШНО ЗАВЕРШИЛ ВСЕ МОДУЛИ ОБУЧЕНИЯ"
+    line4_text = f"И НАБРАЛ {user_exp} ОЧКОВ ОПЫТА!" # Используем exp из current_user
+    line5_text = "VOID_OS_TERMINAL: ДОСТУП РАЗРЕШЕН"
 
     date_str = datetime.datetime.now().strftime("%d.%m.%Y")
 
-    bbox_fio = draw.textbbox((0, 0), fio, font=font_fio)
-    text_w = bbox_fio[2] - bbox_fio[0]
+    # --- Отрисовка строк с разными стилями и позициями ---
     
-    x_fio = (img_w - text_w) / 2
-    y_fio = img_h * 0.45 
+    # 1. ФИО (самый крупный, по центру, неоновый)
+    # y_fio = img_h * 0.45; я его чуть поднял, чтобы влезли 5 строк
+    y_current = img_h * 0.38 
+    text_color_neon = (188, 19, 254) # Неоновый фиолетовый
+    
+    bbox = draw.textbbox((0, 0), line1_text, font=font_fio)
+    text_w = bbox[2] - bbox[0]
+    draw.text(((img_w - text_w) / 2, y_current), line1_text, font=font_fio, fill=text_color_neon)
+    y_current += font_fio.size + 15 # Отступ после первой строки
 
-    text_color = (188, 19, 254)
+    # 2. Основной текст 1 (чуть меньше, по центру, белый/светлый)
+    text_color_white = (255, 255, 255)
+    bbox = draw.textbbox((0, 0), line2_text, font=font_main_text)
+    text_w = bbox[2] - bbox[0]
+    draw.text(((img_w - text_w) / 2, y_current), line2_text, font=font_main_text, fill=text_color_white)
+    y_current += font_main_text.size + 10 # Отступ
 
-    draw.text((x_fio, y_fio), fio, font=font_fio, fill=text_color)
-    draw.text((img_w * 0.7, img_h * 0.8), f"DATE: {date_str}", font=font_date, fill=(255, 255, 255))
+    # 3. Основной текст 2 (по центру, белый)
+    bbox = draw.textbbox((0, 0), line3_text, font=font_main_text)
+    text_w = bbox[2] - bbox[0]
+    draw.text(((img_w - text_w) / 2, y_current), line3_text, font=font_main_text, fill=text_color_white)
+    y_current += font_main_text.size + 10 # Отступ
 
+    # 4. Мелкий текст с XP (по центру, серый/зеленый)
+    text_color_grey = (150, 255, 150) # Светло-зеленый
+    bbox = draw.textbbox((0, 0), line4_text, font=font_small_text)
+    text_w = bbox[2] - bbox[0]
+    draw.text(((img_w - text_w) / 2, y_current), line4_text, font=font_small_text, fill=text_color_grey)
+    y_current += font_small_text.size + 20 # Отступ побольше
+
+    # 5. Подпись (еще мельче, по центру, светло-синий/мятный)
+    text_color_mint = (0, 255, 200) # Мятный
+    bbox = draw.textbbox((0, 0), line5_text, font=font_small_text) # Используем тот же font_small_text
+    text_w = bbox[2] - bbox[0]
+    draw.text(((img_w - text_w) / 2, y_current), line5_text, font=font_small_text, fill=text_color_mint)
+    # y_current += font_small_text.size + 10 # Отступ
+
+    # Дата (снизу справа, как было)
+    draw.text((img_w * 0.7, img_h * 0.85), f"DATE: {date_str}", font=font_date, fill=(255, 255, 255))
+
+
+    # Сохраняем в буфер памяти
     img_io = io.BytesIO()
     img.save(img_io, 'JPEG', quality=95)
     img_io.seek(0)

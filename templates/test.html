@@ -154,23 +154,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function finishQuiz() {
-        quizContainer.style.display = 'none';
-        resultBox.style.display = 'block';
+   function finishQuiz() {
+    quizContainer.style.display = 'none';
+    resultBox.style.display = 'block';
 
-        document.getElementById('result-text').textContent = `Результат: ${score} из ${currentQuestions.length}`;
-        document.getElementById('score-earned-text').textContent = `+${score} XP зачислено в профиль!`;
+    document.getElementById('result-text').textContent = `Результат: ${score} из ${currentQuestions.length}`;
+    document.getElementById('score-earned-text').textContent = `+${score} XP зачислено в профиль!`;
 
-        // Железобетонная отправка результатов в БД
-        fetch('/api/save_score', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ lang: lang, score: score })
+    // Железобетонная отправка результатов в БД
+    fetch('/api/save_score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            lang: lang, 
+            score: score, 
+            total_questions: currentQuestions.length // ДОБАВИЛИ ЭТО
         })
-        .then(res => res.json())
-        .then(data => console.log('XP Сохранено на сервере:', data))
-        .catch(err => console.error('Ошибка сохранения XP:', err));
-    }
+    })
+    .then(res => res.json())
+    .then(data => console.log('XP Сохранено на сервере:', data))
+    .catch(err => console.error('Ошибка сохранения XP:', err));
+}
 
     loadQuestions();
 });
