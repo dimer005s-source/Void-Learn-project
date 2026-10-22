@@ -3,37 +3,21 @@
 {% block content %}
 <div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
     
-    <!-- Заголовок вынесен ВЫШЕ карточки, поднят и оформлен вашим шрифтом -->
     <div class="badge-top black-acute-text" style="margin-bottom: 25px; letter-spacing: 3px;">
         ТЕСТИРОВАНИЕ: {{ lang_name }}
     </div>
 
     <div class="profile-card" style="width: 100%; max-width: 500px; margin: 0 auto;" data-lang="{{ lang_code }}">
         
-        <!-- 1. ВЫБОР УРОВНЯ -->
-        <div id="level-selector">
-            <h3 style="margin-bottom: 20px; color: var(--mint);">ВЫБЕРИ УРОВЕНЬ:</h3>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button class="auth-btn btn-level" data-level="1">УРОВЕНЬ 1 (EASY)</button>
-                <button class="auth-btn btn-level" data-level="2">УРОВЕНЬ 2 (MEDIUM)</button>
-                <button class="auth-btn btn-level" data-level="3">УРОВЕНЬ 3 (HARD)</button>
-            </div>
-            
-            <!-- Пофиксил синий цвет: перекрасил под --mint, убрал подчеркивание -->
-            <a href="{{ url_for('tests_hub') }}" style="display: inline-block; margin-top: 20px; color: var(--mint); text-decoration: none; font-size: 11px; letter-spacing: 1px; opacity: 0.8; transition: 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
-                ← НАЗАД В ХАБ
-            </a>
-        </div>
-
-        <!-- 2. ОКНО ТЕСТА -->
-        <div id="quiz-container" style="display: none;">
+        <!-- 1. ОКНО ТЕСТА (Сразу активно) -->
+        <div id="quiz-container">
             <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--widget-label); margin-bottom: 15px;">
                 <span id="question-number">ВОПРОС 1/15</span>
                 <span id="score-counter">ОЧКИ: 0</span>
             </div>
 
             <h3 id="question-text" style="margin-bottom: 20px; color: var(--text-main); font-size: 1.1rem; text-align: left;">
-                Загрузка вопроса...
+                Загрузка вопросов...
             </h3>
 
             <div id="answers-list" style="display: flex; flex-direction: column; gap: 10px;">
@@ -45,8 +29,8 @@
             </button>
         </div>
 
-        <!-- 3. ОКНО РЕЗУЛЬТАТА -->
-        <div id="result-box" style="display: none;">
+        <!-- 2. ОКНО РЕЗУЛЬТАТА -->
+        <div id="result-box" style="display: none; text-align: center;">
             <h3 style="color: var(--mint); margin-bottom: 15px;">ТЕСТ ЗАВЕРШЕН!</h3>
             <p id="result-text" style="font-size: 14px; color: var(--text-main); margin-bottom: 10px;">Результат: 0 / 15</p>
             <p id="score-earned-text" style="font-size: 12px; color: #4caf50; font-weight: bold; margin-bottom: 20px;">+0 XP зачислено в профиль!</p>
@@ -54,6 +38,10 @@
         </div>
 
     </div>
+    
+    <a href="{{ url_for('tests_hub') }}" style="display: inline-block; margin-top: 20px; color: var(--mint); text-decoration: none; font-size: 11px; letter-spacing: 1px; opacity: 0.8;">
+        ← НАЗАД В ХАБ
+    </a>
 </div>
 
 <script>
@@ -61,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const card = document.querySelector('.profile-card');
     const lang = card.dataset.lang;
     
-    const levelSelector = document.getElementById('level-selector');
     const quizContainer = document.getElementById('quiz-container');
     const resultBox = document.getElementById('result-box');
     
@@ -74,35 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentQuestions = [];
     let currentIndex = 0;
     let score = 0;
-    let answerSelected = false;// Выбор уровня
-    document.querySelectorAll('.btn-level').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const level = btn.dataset.level;
-            loadQuestions(level);
-        });
-    });
+    let answerSelected = false;
 
-    function loadQuestions(level) {
-        fetch(`/api/questions/${lang}/${level}`)
-            .then(res => res.json())
-            .then(data => {
-                if (!data || data.length === 0) {
-                    alert('Вопросы для этого уровня ещё не завезли!');
-                    return;
-                }
-                currentQuestions = data;
-                currentIndex = 0;
-                score = 0;
-
-                levelSelector.style.display = 'none';
-                quizContainer.style.display = 'block';
-                
-                renderQuestion();
-            })
-            .catch(err => console.error('Ошибка загрузки:', err));
-    }
-
-      // Функция перемешивания массива (Fisher-Yates Shuffle)
+    // Функция перемешивания ответов (Fisher-Yates)
     function shuffleArray(array) {
         let shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -110,6 +71,23 @@ document.addEventListener('DOMContentLoaded', () => {
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         return shuffled;
+    }
+
+    // Автоматически грузим уровень 1 при открытии страницы теста
+    function loadQuestions() {
+        fetch(`/api/questions/${lang}/1`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data || data.length === 0) {
+                    alert('Вопросы для этого теста еще не завезли!');
+                    return;
+                }
+                currentQuestions = data;
+                currentIndex = 0;
+                score = 0;
+                renderQuestion();
+            })
+            .catch(err => console.error('Ошибка загрузки:', err));
     }
 
     function renderQuestion() {
@@ -122,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreCounter.textContent = `ОЧКИ: ${score}`;
         questionText.textContent = q.q;
 
-        // Рандомизируем порядок ответов перед выводом
         const randomizedAnswers = shuffleArray(q.a);
 
         randomizedAnswers.forEach(answer => {
@@ -137,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
             answersList.appendChild(btn);
         });
     }
-
 
     function handleAnswer(selectedBtn, chosen, right) {
         if (answerSelected) return;
@@ -194,6 +170,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => console.log('Успешно сохранено:', data))
         .catch(err => console.error('Ошибка сохранения:', err));
     }
+
+    // Запуск при загрузке страницы
+    loadQuestions();
 });
 </script>
 {% endblock %}

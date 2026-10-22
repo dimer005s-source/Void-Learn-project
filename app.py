@@ -150,11 +150,13 @@ def test_page(lang):
                            lang_code=lang.lower())
 
 @app.route('/api/questions/<lang>/<level>')
-@login_required
-def get_questions_api(lang, level):
-    data = load_questions()
-    lang_data = data.get(lang.lower(), {})
-    questions = lang_data.get(str(level), [])
+def get_questions(lang, level):
+    # Принудительно всегда отдаем уровень 1, раз мы объединили всё в один тест
+    with open('questions.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    lang_data = data.get(lang, {})
+    questions = lang_data.get("1", []) # Всегда берем первый массив
     return jsonify(questions)
 
 @app.route('/api/save_score', methods=['POST'])
