@@ -11,7 +11,7 @@
 
 <div class="os-viewport" id="os-root">
     
-    <!-- WINDOW: USER_PROFILE (БАЗОВОЕ ОКНО, НЕ ЗАКРЫВАЕТСЯ) -->
+    <!-- WINDOW: USER_PROFILE -->
     <div id="win-profile" class="profile-card draggable-window resizable" style="top: 80px; left: 80px; width: 340px; min-width: 280px; z-index: 1000;">
         <div class="win-header">
             <span class="win-title">SYS/USER_INFO</span>
@@ -20,12 +20,28 @@
             </div>
         </div>
         <div class="win-content">
-            <h1 class="neon-text" style="font-size: 22px; text-align: center; margin: 10px 0; color: var(--mint);">{{ current_user.fio }}</h1>
+            <h1 class="neon-text" style="font-size: 22px; text-align: center; margin: 10px 0; color: var(--mint);">
+                {{ current_user.fio if current_user.fio else 'ПОЛЬЗОВАТЕЛЬ' }}
+            </h1>
             
             <div class="terminal-block">
-                <div class="t-row"><span>STATUS:</span> <span class="mint-text">ACTIVE</span></div>
-                <div class="t-row"><span>CLASS:</span> <span class="mint-text">{{ current_user.grade }}</span></div>
-                <div class="t-row"><span>IDENT:</span> <span class="mint-text">{{ current_user.email }}</span></div>
+                <divclass="t-row"><span>STATUS:</span> <span class="mint-text">ACTIVE</span></div>
+                <div class="t-row"><span>CLASS:</span> <span class="mint-text">{{ current_user.school_class if current_user.school_class else '-' }}</span></div>
+                <div class="t-row"><span>IDENT:</span> <span class="mint-text">{{ current_user.email if current_user.email else '-' }}</span></div>
+                <div class="t-row"><span>XP:</span> <span class="mint-text">{{ current_user.exp if current_user.exp else 0 }}/60</span></div>
+            </div>
+
+            <!-- БЛОК СЕРТИФИКАТА -->
+            <div style="margin-bottom: 15px;">
+                {% if current_user.exp and current_user.exp >= 60 %}
+                    <a href="/certificate" target="_blank" class="auth-btn" style="background: var(--mint); color: #000; font-weight: bold; box-shadow: 0 0 20px rgba(var(--mint-rgb), 0.5); border: none; width: 100%; text-align: center; text-decoration: none; display: block; box-sizing: border-box;">
+                        🎓 GET_CERTIFICATE ({{ current_user.exp }}/60 XP)
+                    </a>
+                {% else %}
+                    <div class="auth-btn" style="opacity: 0.5; cursor: not-allowed; border-color: #555; color: #888; background: rgba(0,0,0,0.2); width: 100%; text-align: center; box-sizing: border-box;">
+                        🔒 CERTIFICATE_LOCKED ({{ current_user.exp if current_user.exp else 0 }}/60 XP)
+                    </div>
+                {% endif %}
             </div>
 
             <button onclick="openWin('win-form')" class="auth-btn" style="width: 100%; margin-bottom: 10px;">> EXEC NEW_PROJ</button>
@@ -54,6 +70,8 @@
                         <option value="#cpp">C++</option>
                         <option value="#csharp">C#</option>
                         <option value="#java">JAVA</option>
+                        <option value="#html">HTML</option>
+                        <option value="#css">CSS</option>
                     </select>
                     <select name="type_tag" class="input-field terminal-input custom-select">
                         <option value="#site">SITE</option>
@@ -81,11 +99,11 @@
                 {% for item in items %}
                 <div class="item-entry">
                     <div class="item-head">
-                        <span class="item-title">{{ item.title }}</span>
-                        <span class="item-tag">{{ item.tags }}</span>
+                        <span class="item-title">{{ item.title if item.title else item[1] }}</span>
+                        <span class="item-tag">{{ item.tags if item.tags else item[4] }}</span>
                     </div>
-                    <p class="item-desc">{{ item.description if item.description else "No metadata available..." }}</p>
-                    <a href="{{ item.google_link }}" target="_blank" class="card-link" style="width: 100%; padding: 5px; font-size: 9px; text-align: center;">MOUNT_DRIVE</a>
+                    <p class="item-desc">{{ item.description if item.description else (item[2] if item[2] else "No metadata available...") }}</p>
+                    <a href="{{ item.google_link if item.google_link else item[3] }}" target="_blank" class="card-link" style="width: 100%; padding: 5px; font-size: 9px; text-align: center; display: block; box-sizing: border-box;">MOUNT_DRIVE</a>
                 </div>
                 {% endfor %}
             {% else %}
@@ -97,13 +115,11 @@
 </div>
 
 <style>
-    /* Глобальный вьюпорт */
     .os-viewport {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         pointer-events: none; z-index: 1000;
     }
 
-    /* Окна терминала */
     .draggable-window {
         position: absolute; pointer-events: all;
         display: flex; flex-direction: column;
@@ -130,18 +146,15 @@
     }
     .win-btn:hover { background: var(--mint); color: #000; }
 
-    /* Контент внутри */
     .win-content { padding: 15px; flex-grow: 1; overflow: hidden; }
     .scrollable { overflow-y: auto; height: 100%; padding-right: 5px; }
     .scrollable::-webkit-scrollbar { width: 4px; }
     .scrollable::-webkit-scrollbar-thumb { background: var(--mint); border-radius: 10px; }
 
-    /* Инпуты и Селекторы */
     .terminal-input { background: rgba(0,0,0,0.3) !important; color: var(--mint) !important; border: 1px solid rgba(var(--mint-rgb), 0.2) !important; text-align: left !important; }
     .custom-select { appearance: none; cursor: pointer; padding: 5px 10px !important; }
     .custom-select option { background-color: #0d0216; color: var(--mint); }
 
-    /* Декоративные блоки */
     .terminal-block { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(var(--mint-rgb), 0.1); }
     .t-row { display: flex; justify-content: space-between; font-size: 11px; font-family: monospace; margin: 4px 0; }
     .mint-text { color: var(--mint); font-weight: bold; }
@@ -149,10 +162,9 @@
     .item-entry { border: 1px solid rgba(var(--mint-rgb), 0.1); padding: 12px; border-radius: 6px; margin-bottom: 10px; background: rgba(var(--mint-rgb), 0.05); }
     .item-title { font-size: 14px; color: var(--mint); font-weight: bold; }
 
-    /* Уголок ресайза */
     .resizer {
         position: absolute; right: 0; bottom: 0; width: 14px; height: 14px;
-        cursor: nwse-resize; background: linear-gradient(135deg, transparent 50%, var(--mint) 50%);opacity: 0.4; z-index: 10;
+        cursor: nwse-resize; background: linear-gradient(135deg, transparent 50%, var(--mint) 50%); opacity: 0.4; z-index: 10;
     }
 
     .hidden { display: none !important; }
@@ -160,7 +172,6 @@
 </style>
 
 <script>
-// 1. УПРАВЛЕНИЕ ОКНАМИ
 function openWin(id) {
     const el = document.getElementById(id);
     if (el) {
@@ -177,7 +188,6 @@ function bringToFront(el) {
     el.style.zIndex = "2000";
 }
 
-// 2. DRAG & DROP
 document.addEventListener('mousedown', (e) => {
     const header = e.target.closest('.win-header');
     if (!header) return;
@@ -193,7 +203,6 @@ document.addEventListener('mousedown', (e) => {
     document.onmouseup = () => document.removeEventListener('mousemove', moveHandler);
 });
 
-// 3. RESIZE
 document.addEventListener('mousedown', (e) => {
     if (!e.target.classList.contains('resizer')) return;
     const win = e.target.parentElement;
@@ -209,7 +218,6 @@ document.addEventListener('mousedown', (e) => {
     document.onmouseup = () => document.removeEventListener('mousemove', resizeHandler);
 });
 
-// 4. ГЕНЕРАЦИЯ ЗВЕЗД
 const canvas = document.getElementById('void-stars');
 const ctx = canvas.getContext('2d');
 let stars = [];

@@ -30,7 +30,7 @@
       {"q": "Какой символ используется для однострочного комментария?", "a": ["//", "#", "/*", "--"], "right": "//"},
       {"q": "Какой тип используется для хранения одиночных символов?", "a": ["char", "string", "single", "chr"], "right": "char"},
       {"q": "Что означает std::endl?", "a": ["Конец программы", "Перевод строки и сброс буфера", "Ошибка", "Конец функции"], "right": "Перевод строки и сброс буфера"},
-      {"q": "Как создать логическую переменную со значением 'истина'?", "a": ["bool flag = true;", "boolean flag = 1;", "bit flag = true;", "bool flag = True;"], "right": "bool flag = true;"},
+      {"q": "Как создать логическую переменную со значением 'истина'?", "a": ["bool flag = true;", "boolean flag = 1;", "bit flag = true;", "bool flag = True;"], "right": "bool flag= true;"},
       {"q": "Какой оператор возвращает размер типа или объекта в байтах?", "a": ["sizeof", "length", "size", "bytesof"], "right": "sizeof"},
       {"q": "Правильный синтаксис инкремента (увеличения на 1):", "a": ["x++", "x += 1", "++x", "Все варианты верны"], "right": "Все варианты верны"},
       {"q": "Как объявить простой массив из 5 чисел?", "a": ["int arr[5];", "int arr = new int[5];", "array<int, 5> arr;", "vector<int> arr(5);"], "right": "int arr[5];"},
@@ -64,15 +64,53 @@
       {"q": "Как объявить строку?", "a": ["char name = \"Ali\";", "text name = \"Ali\";", "string name := \"Ali\";", "String name = \"Ali\";"], "right": "String name = \"Ali\";"},
       {"q": "Какое ключевое слово создаёт объект?", "a": ["class", "this", "new", "make"], "right": "new"},
       {"q": "Какое ключевое слово объявляет класс?", "a": ["class", "object", "struct", "define"], "right": "class"},
-      {"q": "Какой тип хранит true или false?", "a": ["int","boolean", "String", "double"], "right": "boolean"},
+      {"q": "Какой тип хранит true или false?", "a": ["int", "boolean", "String", "double"], "right": "boolean"},
       {"q": "Какой оператор означает логическое И?", "a": ["||", "!", "&&", "=="], "right": "&&"},
       {"q": "Какой цикл выполняется, пока условие истинно?", "a": ["while", "switch", "case", "import"], "right": "while"},
-      {"q": "Как выйти из цикла немедленно?", "a": ["stop", "exitloop", "returnall", "break"], "right": "break"},
+      {"q": "Как выйти из цикла немедленно?", "a": ["stop", "exitloop", "returnall","break"], "right": "break"},
       {"q": "Какой тип хранит числа с плавающей точкой повышенной точности?", "a": ["boolean", "double", "char", "byte"], "right": "double"},
       {"q": "Как сравнить примитивные значения на равенство?", "a": ["=", "equals", "==", "equalsTo"], "right": "=="},
       {"q": "Как объявить константу класса?", "a": ["static final", "constant", "fixed", "const"], "right": "static final"},
       {"q": "Какой оператор выбирает между вариантами по значению?", "a": ["for", "while", "ifonly", "switch"], "right": "switch"},
       {"q": "Какой символ обычно завершает инструкцию Java?", "a": [":", ";", ",", "."], "right": ";"}
+    ]
+  },
+  "html": {
+    "1": [
+      {"q": "Что означает аббревиатура HTML?", "a": ["HyperText Markup Language", "HighText Machine Language", "HyperTabular Markup Level", "Home Tool Markup Language"], "right": "HyperText Markup Language"},
+      {"q": "Какой тег используется для создания самого крупного заголовка?", "a": ["<h6>", "<h1>", "<head>", "<header>"], "right": "<h1>"},
+      {"q": "Какой тег создает гиперссылку?", "a": ["<a>", "<link>", "<href>", "<url>"], "right": "<a>"},
+      {"q": "Атрибут для указания адреса изображения в теге <img>:", "a": ["link", "href", "src", "file"], "right": "src"},
+      {"q": "Какой тег используется для вставки разрыва строки?", "a": ["<break>", "<lb>", "<br>", "<hr>"], "right": "<br>"},
+      {"q": "Какой тег создает нумерованный список?", "a": ["<ul>", "<li>", "<ol>", "<list>"], "right": "<ol>"},
+      {"q": "В каком теге размещается вся видимая часть веб-страницы?", "a": ["<head>", "<body>", "<html>", "<main>"], "right": "<body>"},
+      {"q": "Какой тег отвечает за создание формы для ввода данных?", "a": ["<input>", "<form>", "<field>", "<textbox>"], "right": "<form>"},
+      {"q": "Какой атрибут поля <input> делает его обязательным для заполнения?", "a": ["necessary", "important", "validate", "required"], "right": "required"},
+      {"q": "Какой тег создает элемент таблицы — строку?", "a": ["<td>", "<th>", "<tr>", "<table>"], "right": "<tr>"},
+      {"q": "Какой тег подключает внешние CSS стили?", "a": ["<style>", "<script>", "<link>", "<css>"], "right": "<link>"},
+      {"q": "Для чего используется атрибут alt в теге <img>?", "a": ["Альтернативный текст, если картинка не загрузилась", "Заголовок картинки", "Ссылка на полноразмерное фото", "Размер картинки"], "right": "Альтернативный текст, если картинка не загрузилась"},
+      {"q": "Какая doctype декларация правильная для HTML5?", "a": ["<!DOCTYPE html>", "<!DOCTYPE HTML5>", "<?xml doctype html>", "<DOCTYPE html5>"], "right": "<!DOCTYPE html>"},
+      {"q": "Какой тег используется для создания раскрывающегося выпадающего списка?", "a": ["<list>", "<dropdown>", "<select>", "<input type='dropdown'>"], "right": "<select>"},
+      {"q": "Какой тег является семантическим контейнером для нижней части сайта (футера)?", "a": ["<bottom>", "<footer>", "<end>", "<section>"], "right": "<footer>"}
+    ]
+  },
+  "css": {
+    "1": [
+      {"q": "Что означает расшифровка CSS?", "a": ["Cascading Style Sheets", "Creative Style System", "Computer Style Sheets", "Colorful Style System"], "right": "Cascading Style Sheets"},
+      {"q": "Какое свойство меняет цвет текста элемента?", "a": ["text-color", "color", "font-color", "background-color"], "right": "color"},
+      {"q": "Как обратиться к элементу с id='header' в CSS?", "a": [".header", "#header", "header", "*header"], "right": "#header"},
+      {"q": "Как обратиться к элементам с классом 'btn'?", "a": ["#btn", "btn", ".btn", "*btn"], "right": ".btn"},
+      {"q": "Какое свойство отвечает за размер шрифта?", "a": ["font-size", "text-size", "font-weight", "size"], "right": "font-size"},
+      {"q": "Какой внешний отступ задается свойством margin?", "a": ["Отступ внутри элемента", "Отступ от границ элемента до соседних элементов", "Толщина рамки", "Высота строки"], "right": "Отступ от границ элемента до соседних элементов"},
+      {"q": "Какое свойство делает текст жирным?", "a": ["font-style: bold", "font-weight: bold", "text-decoration: bold", "font-bold: true"], "right": "font-weight: bold"},
+      {"q": "Какой селектор имеет наивысшую специфичность?", "a": ["Тег (h1)", "Класс (.btn)", "Идентификатор (#header)", "Встроенный стиль (inline style)"], "right": "Встроенный стиль (inline style)"},
+      {"q": "Какое значение свойства display включает Flexbox?", "a": ["display: block", "display: flex", "display: grid", "display: inline-flexbox"], "right": "display: flex"},
+      {"q": "Как отцентрировать флекс-элементы по главной оси?", "a": ["align-items: center", "justify-content: center", "text-align: center", "align-content: center"], "right": "justify-content: center"},
+      {"q": "Какое значение position фиксирует элемент относительно окна браузера при скролле?", "a": ["absolute", "relative", "fixed", "sticky"], "right": "fixed"},
+      {"q": "Какое свойство управляет прозрачностью элемента?", "a": ["visibility", "opacity", "filter", "display"], "right": "opacity"},
+      {"q": "Что делает свойство box-sizing: border-box?", "a": ["Включает padding и border в итоговую ширину и высоту элемента", "Увеличивает размер элемента на ширину рамки", "Скрывает рамку", "Делает углы круглыми"], "right": "Включает padding и border в итоговую ширину и высоту элемента"},
+      {"q": "Какое свойство создает скругление углов у блока?", "a": ["border-radius", "corner-radius", "border-style", "box-shadow"], "right": "border-radius"},
+      {"q": "Какое свойство задает порядок наложения элементов по оси Z?", "a": ["z-index", "depth", "order", "layer"], "right": "z-index"}
     ]
   }
 }

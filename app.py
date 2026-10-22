@@ -1,7 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from PIL import Image, ImageDraw, ImageFont
 import os
+import json
+import datetime
+import io
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'void-777-key'
@@ -15,16 +19,26 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message = ""
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# --- Модели БД ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fio = db.Column(db.String(100))
-    grade = db.Column(db.String(20))
+    school_class = db.Column(db.String(20))
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
+    exp = db.Column(db.Integer, default=0)
     score_py = db.Column(db.Integer, default=0)
     score_cpp = db.Column(db.Integer, default=0)
     score_cs = db.Column(db.Integer, default=0)
     score_java = db.Column(db.Integer, default=0)
+    score_html = db.Column(db.Integer, default=0)
+    score_css = db.Column(db.Integer, default=0)
+
+    portfolio_items = db.relationship('Portfolio', backref='author', lazy=True)
 
 class Portfolio(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,20 +46,32 @@ class Portfolio(db.Model):
     title = db.Column(db.String(100))
     description = db.Column(db.Text)
     google_link = db.Column(db.String(200))
-    img_link = db.Column(db.String(200))
+    img_link = db.Column(db.String(200), default='')
     tags = db.Column(db.String(200))
     is_visible = db.Column(db.Boolean, default=True)
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+# --- Context Processor для передачи текущего XP в каждый шаблон ---
+@app.context_processor
+def inject_user_exp():
+    if current_user.is_authenticated:
+        # Важно: всегда запрашиваем актуальный XP из БД
+        # current_user.exp может быть неактуален после AJAX-запроса,
+        # если пользователь не перезагрузил страницу.
+        # Запрашиваем из БД для гарантированной актуальности.
+        user = User.query.get(current_user.id)
+        return {'global_user_exp': user.exp if user else 0}
+    return {'global_user_exp': 0}
 
+# --- Маршруты ---
 @app.route('/')
 def index(): 
     return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('profile'))
+        
     if request.method == 'POST':
         user = User.query.filter_by(email=request.form.get('email')).first()
         if user and user.password == request.form.get('password'):
@@ -56,14 +82,20 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('profile'))
+
     if request.method == 'POST':
         fio = request.form.get('fio')
         email = request.form.get('email')
         password = request.form.get('password')
-        grade = request.form.get('school_class')
+        school_class = request.form.get('school_class')
+        
         if User.query.filter_by(email=email).first():
+            flash("Пользователь с таким email уже существует", "error")
             return redirect(url_for('register'))
-        new_user = User(fio=fio, email=email, password=password, grade=grade)
+            
+        new_user = User(fio=fio, email=email, password=password, school_class=school_class, exp=0)
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -73,39 +105,49 @@ def register():
 @app.route('/profile')
 @login_required
 def profile():
-    user_items = Portfolio.query.filter_by(user_id=current_user.id).all()
-    return render_template('profile.html', items=user_items)
+    items = Portfolio.query.filter_by(user_id=current_user.id).all()
+    return render_template('profile.html', current_user=current_user, items=items)
 
 @app.route('/portfolios')
 @login_required
 def portfolios():
-    all_items = Portfolio.query.filter((Portfolio.is_visible == True) | (Portfolio.user_id == current_user.id)).all()
+    all_items = Portfolio.query.filter(
+        (Portfolio.is_visible == True) | (Portfolio.user_id == current_user.id)
+    ).all()
+    
     output = []
     for item in all_items:
-        author = User.query.get(item.user_id)
+        author_name = item.author.fio if item.author else "Root_User"
         output.append({
             'title': item.title,
             'description': item.description,
             'tags': item.tags if item.tags else "#void",
             'google_link': item.google_link,
-            'author_name': author.fio if author else "Root_User"
+            'author_name': author_name
         })
     return render_template('portfolios.html', items=output)
 
 @app.route('/rating')
 @login_required
 def rating():
-    u_list = User.query.all()
-    u_sorted = sorted(u_list, key=lambda u: (u.score_py or 0) + (u.score_cpp or 0) + (u.score_cs or 0) + (u.score_java or 0), reverse=True)
-    return render_template('rating.html', users=u_sorted)
+    u_list = User.query.order_by(User.exp.desc()).all()
+    return render_template('rating.html', users=u_list)
 
 @app.route('/save_portfolio', methods=['POST'])
 @login_required
 def save_portfolio():
     title = request.form.get('title')
+    description = request.form.get('description')
     g_link = request.form.get('google_link')
     tags = f"{request.form.get('lang_tag', '')} {request.form.get('type_tag', '')}".strip()
-    new_item = Portfolio(user_id=current_user.id, title=title, google_link=g_link, tags=tags)
+    
+    new_item = Portfolio(
+        user_id=current_user.id, 
+        title=title, 
+        description=description,
+        google_link=g_link, 
+        tags=tags
+    )
     db.session.add(new_item)
     db.session.commit()
     return redirect(url_for('profile'))
@@ -117,85 +159,136 @@ def lessons():
     cpp_ids = ["5l9nxwh5Wiw", "FKwZqkfGyjc", "AnJWQoKmG7M", "93MfXvA1Qq8", "UB1eyj1LJyI", "Rd10XYY94dI", "702lSkBg5so", "P8oANnmWNM8", "zQ8YBJCpsx4", "Jm8y4OQsNpM", "3GALXU-F3C8", "DKkAJtaE0w0", "f63JnOf1FHo", "b7meCwo7SRE", "Y0jHwddTzX8"]
     csharp_ids = ["_8yZYhAkQjQ", "3MireZUB3Hw", "8q200PT8jTU", "L4PkgGMJTgI", "agse5YvwKoo", "rHHM7pzg7Z8", "e0ajLLezBPE", "MrEelmsSoC0", "DYoXXSjzbaU", "K5gqIUTBey0", "rj9KHVLXaME", "ij__675AuqM", "hzi4xWFFnBU", "TpkMZprzoXE", "ktVCHcsdIWU"]
     java_ids = ["U2OliQwRb6c", "-1LLzZC-9cU", "CEMhFQZrVzw", "mTucAnRpxcQ", "-RXEXP4-Iic", "SdGp-5pcPeA", "wlKQBgJqPRs", "4oRyzq6Z4KE", "MzNoISmsmpk", "kbYVt54Emxw", "XU4crdUR1DI", "7UJyp2A5lQ8", "sfDFZPE9tuw", "lr8SsTi9uKI", "z_Us76GSf_Y"]
-    
+    html_ids = ["q8F2L5J_kUo", "nL5yN_k8wE0", "H7w3W_f0YI0", "S4xV6_z1KqY", "G9jP8_a2BlX", "M0cR1_t3NfP", "Q1fG4_v5BcJ", "Y2hA7_d8XeW", "Z3xI0_u9VpL", "A4sD1_e0FjK", "B5gH2_i1LnM", "C6kL3_m2NpO", "D7qR4_s3TvU", "E8wX5_y4ZwC", "F9aB6_c5DeF"]
+    css_ids = ["xY7cZ_d9EwF", "aB1cD_e2F_G", "hI3jK_l4M_N", "oP5qR_s6T_U", "vW7xY_z8A_B", "C9dE0_f1G_H", "I2jK3_l4M_N", "O5pQ6_r7S_T", "U8vW9_x0Y_Z", "1a2b3_c4d5e", "6f7g8_h9i0j", "1k2l3_m4n5o", "6p7q8_r9s0t", "1u2v3_w4x5y", "6z7A8_B9C0D"]
+
     modules = {
         "Python": [{"title": f"PYTHON: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(python_ids)],
         "C++": [{"title": f"C++: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(cpp_ids)],
         "C#": [{"title": f"C#: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(csharp_ids)],
-        "Java": [{"title": f"JAVA: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(java_ids)]
+        "Java": [{"title": f"JAVA: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(java_ids)],
+        "HTML": [{"title": f"HTML: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(html_ids)],
+        "CSS": [{"title": f"CSS: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(css_ids)]
     }
     return render_template('lessons.html', modules=modules)
 
-
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
-import json
-from flask import jsonify
-
-# Загрузка вопросов
-def load_questions():
-    with open("questions.json", "r", encoding="utf-8") as f:
-        return json.load(f)
+def load_questions_from_json():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(base_dir, 'questions.json')
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Ошибка чтения JSON: {e}")
+        return {}
 
 @app.route('/test/<lang>')
 @login_required
 def test_page(lang):
-    # Словарь для красивого отображения имен
-    display_names = {"python": "PYTHON", "cpp": "C++", "csharp": "C#", "java": "JAVA"}
-    return render_template('test.html', 
-                           lang_name=display_names.get(lang.lower(), lang.upper()), 
+    display_names = {
+        "python": "PYTHON", "cpp": "C++", "csharp": "C#", "java": "JAVA",
+        "html": "HTML 5", "css": "CSS 3"
+    }
+    return render_template('test.html',lang_name=display_names.get(lang.lower(), lang.upper()), 
                            lang_code=lang.lower())
 
+@app.route('/api/questions/<lang>')
 @app.route('/api/questions/<lang>/<level>')
-@app.route('/api/questions/<lang>')  # Добавили роут без уровня для страховки
 def get_questions(lang, level="1"):
     try:
-        # Указываем абсолютный путь к файлу относительно app.py (чтобы PythonAnywhere не путался)
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        json_path = os.path.join(base_dir, 'questions.json')
-        
-        with open(json_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        
-        lang_data = data.get(lang, {})
-        # Всегда берем "1" ключ, раз объединили вопросы
+        questions_data = load_questions_from_json()
+        lang_data = questions_data.get(lang.lower(), {})
         questions = lang_data.get("1", [])
-        
         return jsonify(questions)
     except Exception as e:
-        print(f"Ошибка загрузки JSON: {e}")
+        print(f"Ошибка получения вопросов: {e}")
         return jsonify([]), 500
-
 
 @app.route('/api/save_score', methods=['POST'])
 @login_required
 def save_score():
-    data = request.json
-    lang = data.get('lang')
-    points = data.get('score', 0)
-
-    # Прибавляем очки в зависимости от языка
-    if lang == 'python':
-        current_user.score_py += points
-    elif lang == 'cpp':
-        current_user.score_cpp += points
-    elif lang == 'csharp':
-        current_user.score_cs += points
-    elif lang == 'java':
-        current_user.score_java += points
+    data = request.json or {}
+    score = int(data.get('score', 0))
+    lang_code = data.get('lang', '').lower()
     
+    user = current_user
+    user.exp = (user.exp or 0) + score
+    
+    if lang_code == 'python':
+        user.score_py = (user.score_py or 0) + score
+    elif lang_code == 'cpp':
+        user.score_cpp = (user.score_cpp or 0) + score
+    elif lang_code == 'csharp':
+        user.score_cs = (user.score_cs or 0) + score
+    elif lang_code == 'java':
+        user.score_java = (user.score_java or 0) + score
+    elif lang_code == 'html':
+        user.score_html = (user.score_html or 0) + score
+    elif lang_code == 'css':
+        user.score_css = (user.score_css or 0) + score
+    
+    db.session.add(user)
     db.session.commit()
-    return jsonify({"status": "success", "new_total": points})
 
-# Добавим также роут для ХАБА тестов, если его еще нет
+    return jsonify({'status': 'ok', 'new_exp': user.exp})
+
 @app.route('/tests_hub')
 @login_required
 def tests_hub():
     return render_template('tests_hub.html')
 
+@app.route('/certificate')
+@login_required
+def generate_certificate():
+    fio = current_user.fio
+    user_exp = current_user.exp or 0
+
+    if user_exp < 60:
+        return f"<h1 style='color: white; background: #000; padding: 20px;'>НЕДОСТАТОЧНО XP! У вас {user_exp}/60 XP. Пройдите все тесты, чтобы получить сертификат!</h1>", 403
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(base_dir, 'static', 'certs', 'template.jpg')
+    font_path = os.path.join(base_dir, 'static', 'fonts', 'Black acute.ttf')
+
+    if not os.path.exists(template_path):
+        return "Файл шаблона static/certs/template.jpg не найден!", 404
+
+    img = Image.open(template_path).convert("RGB")
+    draw = ImageDraw.Draw(img)
+
+    img_w, img_h = img.size
+
+    try:
+        font_fio = ImageFont.truetype(font_path, 60)
+        font_date = ImageFont.truetype(font_path, 30)
+    except Exception:
+        font_fio = ImageFont.load_default()
+        font_date = ImageFont.load_default()
+
+    date_str = datetime.datetime.now().strftime("%d.%m.%Y")
+
+    bbox_fio = draw.textbbox((0, 0), fio, font=font_fio)
+    text_w = bbox_fio[2] - bbox_fio[0]
+    
+    x_fio = (img_w - text_w) / 2
+    y_fio = img_h * 0.45 
+
+    text_color = (188, 19, 254)
+
+    draw.text((x_fio, y_fio), fio, font=font_fio, fill=text_color)
+    draw.text((img_w * 0.7, img_h * 0.8), f"DATE: {date_str}", font=font_date, fill=(255, 255, 255))
+
+    img_io = io.BytesIO()
+    img.save(img_io, 'JPEG', quality=95)
+    img_io.seek(0)
+
+    return send_file(img_io, mimetype='image/jpeg', as_attachment=False, download_name=f'Certificate_{fio}.jpg')
 
 if __name__ == "__main__":
     with app.app_context():

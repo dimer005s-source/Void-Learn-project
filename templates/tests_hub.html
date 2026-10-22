@@ -1,16 +1,111 @@
 {% extends "base.html" %}
 
+{% block title %}VOID LEARN - ТЕСТ-ХАБ{% endblock %}
+
 {% block content %}
-<div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <div class="badge-top" style="margin-bottom: 25px;">ТЕСТ-ХАБ</div>
+<div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 0;">
 
     <div class="tests-grid" style="margin: 0 auto;">
-        {% for lang, name in [('python', 'PYTHON'), ('cpp', 'C++'), ('csharp', 'C#'), ('java', 'JAVA')] %}
-        <a href="{{ url_for('test_page', lang=lang) }}" class="profile-card">
-            <h3>#{{ name }}</h3>
-            <p>ПРОВЕРИТЬ ЗНАНИЯ</p>
+        {% for lang, name, icon_color in [
+            ('python', 'PYTHON', '#3776ab'), 
+            ('cpp', 'C++', '#00599c'), 
+            ('csharp', 'C#', '#239120'), 
+            ('java', 'JAVA', '#f89820'),
+            ('html', 'HTML 5', '#e34f26'),
+            ('css', 'CSS 3', '#1572b6')
+        ] %}
+        <a href="/test/{{ lang }}" class="profile-card test-card" style="--accent-color: {{ icon_color }};">
+            <h3 class="black-acute-font">#{{ name }}</h3>
+            <p class="black-acute-font">ПРОВЕРИТЬ ЗНАНИЯ</p>
         </a>
         {% endfor %}
     </div>
 </div>
+
+<style>
+    /* Прямое подключение шрифта если не подтянулся из CSS */
+    @font-face {
+        font-family: 'Black Acute';
+        src: url('/static/fonts/Black acute.ttf') format('truetype');
+    }
+
+    .black-acute-font {
+        font-family: 'Black Acute', monospace, sans-serif !important;
+    }
+
+    .tests-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        width: 100%;
+        max-width: 800px;
+        padding: 10px;
+    }
+
+    .test-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 30px 20px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .test-card h3 {
+        font-size: 1.8rem;
+        color: var(--mint);
+        margin-bottom: 8px;
+        transition: color 0.3s ease;
+        letter-spacing: 2px;
+    }
+
+    .test-card p {
+        font-size: 0.8rem;
+        color: var(--text-main);
+        opacity: 0.6;
+        letter-spacing: 1px;
+        margin: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .test-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-color, var(--mint));
+        box-shadow: 0 0 20px rgba(var(--mint-rgb), 0.3);
+    }
+
+    .test-card:hover h3 {
+        color: var(--accent-color, #ffffff);
+        text-shadow: 0 0 10px var(--accent-color, var(--mint));
+    }
+
+    .test-card:hover p {
+        opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+        .tests-grid {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        
+        .test-card {
+            padding: 20px 10px;
+        }
+
+        .test-card h3 {
+            font-size: 1.2rem;
+        }
+
+        .test-card p {
+            font-size: 0.7rem;
+        }
+    }
+</style>
 {% endblock %}

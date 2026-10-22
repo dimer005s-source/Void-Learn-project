@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        @font-face {
+    font-family: 'Black Acute';
+    src: url('../fonts/Black acute.ttf') format('truetype'),
+         url('/static/fonts/Black acute.ttf') format('truetype'); /* Запасной путь */
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Глобальный класс для использования */
+.black-acute-text {
+    font-family: 'Black Acute', sans-serif !important;
+}
         [data-theme="light"] #star-field-bg, [data-theme="light"] canvas[id*="stars"] { display: none !important; }
         
         #black-hole-root {
@@ -40,18 +52,24 @@
         </a>
     </div>
 
-    <!-- UI: XP BAR (Полоса опыта) -->
-    <div class="level-badge-fixed" style="width: 240px; padding: 12px 15px; position: fixed; top: 20px; right: 20px; z-index: 99999; border-radius: 10px;">
-        {% set total_exp = (current_user.score_py or 0) + (current_user.score_cpp or 0) + (current_user.score_cs or 0) + (current_user.score_java or 0) %}
-        {% set exp_percentage = ((total_exp / 60) * 100) if total_exp < 60 else 100 %}
-        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-            <span class="black-acute-text" style="font-size: 8px; opacity: 0.8;">VOID_PROGRESS</span>
-            <span style="font-size: 11px; color: var(--mint); font-weight: bold;">{{ total_exp }} / 60 XP</span>
-        </div>
-        <div style="width: 100%; height: 6px; background: rgba(var(--mint-rgb), 0.1); border-radius: 10px; overflow: hidden; border: 1px solid rgba(var(--mint-rgb), 0.2);">
-            <div style="width: {{ exp_percentage }}%; height: 100%; background: var(--mint); box-shadow: 0 0 15px var(--mint); transition: width 1.5s ease;"></div>
-        </div>
+   <div class="void-progress" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+    <span style="font-size: 10px; color: var(--text-main);">VOID_PROGRESS</span>
+    <div style="width: 120px; height: 8px; background: rgba(var(--mint-rgb), 0.2); border-radius: 4px; overflow: hidden; margin-top: 5px;">
+        <div id="progress-bar-fill" style="height: 100%; width: {{ (global_user_exp / 60) * 100 }}%; background: var(--mint); border-radius: 4px; transition: width 0.3s ease;"></div>
     </div>
+    <span id="progress-text" style="font-size: 10px; color: var(--mint); margin-top: 5px; display: block; text-align: right;">{{ global_user_exp }}/60 XP</span>
+</div>
+
+<!-- Пример стиля, если нет в style.css -->
+<style>
+    .void-progress {
+        background: rgba(var(--card-bg-rgb), 0.7); /* Пример: полупрозрачный фон */
+        padding: 8px 12px;
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(var(--mint-rgb), 0.2);
+    }
+</style>
     {% endif %}
 
     <!-- Основной контент страниц -->
