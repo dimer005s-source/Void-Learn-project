@@ -163,9 +163,18 @@ def lessons():
     cpp_ids = ["5l9nxwh5Wiw", "FKwZqkfGyjc", "AnJWQoKmG7M", "93MfXvA1Qq8", "UB1eyj1LJyI", "Rd10XYY94dI", "702lSkBg5so", "P8oANnmWNM8", "zQ8YBJCpsx4", "Jm8y4OQsNpM", "3GALXU-F3C8", "DKkAJtaE0w0", "f63JnOf1FHo", "b7meCwo7SRE", "Y0jHwddTzX8"]
     csharp_ids = ["_8yZYhAkQjQ", "3MireZUB3Hw", "8q200PT8jTU", "L4PkgGMJTgI", "agse5YvwKoo", "rHHM7pzg7Z8", "e0ajLLezBPE", "MrEelmsSoC0", "DYoXXSjzbaU", "K5gqIUTBey0", "rj9KHVLXaME", "ij__675AuqM", "hzi4xWFFnBU", "TpkMZprzoXE", "ktVCHcsdIWU"]
     java_ids = ["U2OliQwRb6c", "-1LLzZC-9cU", "CEMhFQZrVzw", "mTucAnRpxcQ", "-RXEXP4-Iic", "SdGp-5pcPeA", "wlKQBgJqPRs", "4oRyzq6Z4KE", "MzNoISmsmpk", "kbYVt54Emxw", "XU4crdUR1DI", "7UJyp2A5lQ8", "sfDFZPE9tuw", "lr8SsTi9uKI", "z_Us76GSf_Y"]
-    html_ids = ["q8F2L5J_kUo", "nL5yN_k8wE0", "H7w3W_f0YI0", "S4xV6_z1KqY", "G9jP8_a2BlX", "M0cR1_t3NfP", "Q1fG4_v5BcJ", "Y2hA7_d8XeW", "Z3xI0_u9VpL", "A4sD1_e0FjK", "B5gH2_i1LnM", "C6kL3_m2NpO", "D7qR4_s3TvU", "E8wX5_y4ZwC", "F9aB6_c5DeF"]
-    css_ids = ["xY7cZ_d9EwF", "aB1cD_e2F_G", "hI3jK_l4M_N", "oP5qR_s6T_U", "vW7xY_z8A_B", "C9dE0_f1G_H", "I2jK3_l4M_N", "O5pQ6_r7S_T", "U8vW9_x0Y_Z", "1a2b3_c4d5e", "6f7g8_h9i0j", "1k2l3_m4n5o", "6p7q8_r9s0t", "1u2v3_w4x5y", "6z7A8_B9C0D"]
-
+    css_ids = [
+        "hft4XYApT44", "DX9ITfNVM7I", "LQxx5Z9XEdM", "nZHrCDJEnw4", 
+        "k2XTkIW9Y0I", "B4x380VocnQ", "EjCTUncWviU", "cVeFNl3Jz8I", 
+        "zy4yzUjpnvA", "KEz9bBJjsHg", "rc80VdpsK8M", "0YZJngL1q38",
+        "SpCUuyzzTp8", "3YW65K6LcIA", "RSIclXv6m9g" 
+    ]
+    html_ids = [
+        "_R5a-Kc0pRc", "YzYkebeN7mg", "3V4qHup5BB8", "6RoXrWu2EuM", 
+        "ow3LCjZTbsY", "1o1tXDk3_NM", "X2E4QdsscPM", "otxwUoo3iA0", 
+        "rL62z-VZX_c", "6235dvRWABw", "D9toRUtfJ_0", "EQ0vB9oEmcA", 
+        "UXIB8nFjZQA", "hrU9h90xS6E", "x2Miug6g9wU"
+    ]
     modules = {
         "Python": [{"title": f"PYTHON: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(python_ids)],
         "C++": [{"title": f"C++: УРОК {idx+1}", "video_id": vid} for idx, vid in enumerate(cpp_ids)],
